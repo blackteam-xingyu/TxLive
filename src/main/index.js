@@ -19,9 +19,13 @@ function createWindow () {
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    height: 563,
     useContentSize: true,
-    width: 1000
+    width: 800,
+    height: 450,
+    transparent: true,
+    backgroundColor: '#00000000',
+    frame: false,
+    resizable: false
   })
 
   mainWindow.loadURL(winURL)
