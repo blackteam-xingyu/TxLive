@@ -1,0 +1,152 @@
+// 此文件为公共样式文件
+@import url(./font.scss);
+
+html,
+html * {
+    font-family: NotoSans;
+    color      : #333;
+}
+
+html,
+body,
+#app {
+    height: 100%;
+    width : 100%;
+
+}
+
+html {
+
+    // background-color: white;
+    // border-radius: 10px;
+    * {
+        box-sizing: border-box
+    }
+}
+
+body {
+    margin               : 0;
+    // padding           : 6px;
+    background-color     : transparent;
+    // display: flex;
+    // justify-content: center;
+    // align-items: center;
+}
+
+.app {
+
+    // height: calc(100% - 20px);
+    // width: calc(100% - 20px);
+    // flex: 1 1 auto;
+    overflow           : hidden;
+    background-color   : white;
+    // border-radius   : 12px;
+    // box-shadow      : 1px 1px 6px #999;
+
+    &-head {
+        border-bottom     : 1px solid #ccc;
+        -webkit-app-region: drag;
+
+        * {
+            -webkit-app-region: no-drag;
+        }
+
+        height        : 30px;
+        // text-align : right;
+        display       : flex;
+        align-items   : center;
+
+        .el-button+.el-button {
+            margin: 0;
+        }
+
+        &-title {
+            flex              : 1 1 auto;
+            padding-left      : 20px;
+            display           : flex;
+            align-items       : center;
+            -webkit-app-region: drag;
+
+            * {
+                -webkit-app-region: drag;
+            }
+        }
+
+        &-text {
+            font-size   : 14px;
+            padding-left: 20px;
+        }
+
+        &-btn {
+            border : none;
+            padding: 9px;
+
+        }
+
+        .closebtn {
+            &:hover {
+                background-color: #fef0f0;
+                color           : #f56c6c;
+            }
+
+        }
+
+        .settingbtn {
+            &:hover {
+                background-color: #f4f4f5;
+                color           : #909399;
+            }
+        }
+
+        // .el-button--default:focus {
+        //     background-color: white;
+        //     color           : #606266;
+        // }
+    }
+}
+
+//弹窗样式
+.el-dialog,
+.el-popover {
+    border-radius: 6px;
+}
+
+//气泡样式
+.el-tooltip__popper {
+    font-size: 10px;
+    padding  : 5px;
+}
+
+
+//下拉菜单样式
+.el-dropdown-menu__item {
+    padding    : 0 10px;
+    font-size  : 12px;
+    line-height: 12px;
+}
+
+//动画样式
+.music-title {
+    // font-size: 40px;
+    color: #de6f64;
+    background-image: -webkit-linear-gradient(left,
+            #ffdcb4,
+            #b96972 25%,
+            #e88a57 50%,
+            #804170 75%,
+            #a596cd 100%);
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text;
+    -webkit-background-size: 200% 100%;
+    -webkit-animation      : masked-animation 2.5s infinite linear;
+}
+
+@-webkit-keyframes masked-animation {
+    0% {
+        background-position: 0 0;
+    }
+
+    100% {
+        background-position: -100% 0;
+    }
+}

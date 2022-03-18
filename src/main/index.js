@@ -20,12 +20,15 @@ function createWindow () {
    */
   mainWindow = new BrowserWindow({
     useContentSize: true,
-    width: 800,
-    height: 450,
-    transparent: true,
+    width: 1000,
+    height: 562.5,
+    // transparent: true,
     backgroundColor: '#00000000',
     frame: false,
-    resizable: false
+    // resizable: false,
+    maximizable: true,
+    minimizable: true,
+    resizable: true,
   })
 
   mainWindow.loadURL(winURL)
