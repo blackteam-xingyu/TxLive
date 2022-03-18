@@ -13,6 +13,41 @@
         点击开始，开启一段新的直播之旅
       </div>
     </transition>
+    <div class="home-btn">
+      <el-button
+        v-show="show.show3"
+        type="warning"
+        icon="el-icon-circle-plus"
+        @click="newLive"
+        round
+        >新直播间</el-button
+      >
+      <el-button
+        v-show="show.show4"
+        type="primary"
+        icon="el-icon-circle-plus"
+        plain
+        round
+        >打开直播间</el-button
+      >
+      <el-button
+        v-show="show.show5"
+        type="info"
+        icon="el-icon-s-tools"
+        plain
+        round
+        >直播间管理</el-button
+      >
+      <el-button
+        v-show="show.show6"
+        type="danger"
+        icon="el-icon-circle-plus"
+        plain
+        round
+        @click="quit"
+        >退出</el-button
+      >
+    </div>
   </div>
 </template>
 <script>
@@ -23,19 +58,31 @@ export default {
       show: {
         show1: false,
         show2: false,
+        show3: false,
+        show4: false,
+        show5: false,
+        show6: false,
       },
     };
   },
   props: [],
-  methods: {},
+  methods: {
+    quit() {
+      this.$electron.remote.app.quit();
+    },
+    newLive() {
+      this.$router.push("/live");
+      // this.$router.push()
+    },
+  },
   mounted() {
     let i = 1;
     let clock = setInterval(() => {
-      if (i <= 2) {
+      if (i <= 6) {
         this.show[`show${i}`] = true;
         i++;
       } else clearInterval(clock);
-    }, 1000);
+    }, 400);
   },
 };
 </script>
@@ -54,6 +101,16 @@ export default {
   }
   &-discribe {
     font-size: 18px;
+    color: #333;
+    font-weight: 600;
+  }
+  &-btn {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    /deep/.el-button {
+      // font-size: 24px;
+    }
   }
 }
 </style>

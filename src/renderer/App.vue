@@ -8,8 +8,10 @@
           fit="contain"
         />
         <div class="app-head-text">
-          <span class="music-title">糖心直播姬</span>
-          <span style="font-size:10px;padding-left:10px">——您贴心的直播助手</span>
+          <span class="music-title">糖心直播娘</span>
+          <span style="font-size: 10px; padding-left: 10px; color: #333"
+            >——您贴心的直播助手</span
+          >
         </div>
       </div>
       <el-dropdown trigger="click" @visible-change="dropDown">
@@ -66,8 +68,8 @@
       <el-popover placement="top" width="160" v-model="visible">
         <p>是否关闭TxLive</p>
         <div style="text-align: right; margin: 0">
-          <el-button @click="visible = false" size="mini"> 取 消 </el-button>
-          <el-button type="danger" @click="stopApp" size="mini">
+          <el-button @click="visible = false" size="mini" type="info" plain round> 取 消 </el-button>
+          <el-button type="danger" @click="stopApp" size="mini" round>
             确 定
           </el-button>
         </div>
