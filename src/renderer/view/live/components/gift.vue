@@ -22,6 +22,7 @@ export default {
   box-shadow: 0px 0px 10px #999;
   white-space: nowrap;
   overflow: hidden;
+  color: #F56C6C;
   &-title {
     border-bottom: 1px solid #ccc;
     height: 30px;

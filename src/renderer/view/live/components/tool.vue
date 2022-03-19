@@ -21,6 +21,7 @@ export default {
   border-radius: 3px;
   box-shadow: 0px 0px 10px #999;
   overflow: hidden;
+  color: #E6A23C;
   &-title {
     border-bottom: 1px solid #ccc;
     height: 30px;

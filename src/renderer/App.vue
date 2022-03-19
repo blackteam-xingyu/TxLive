@@ -8,7 +8,7 @@
           fit="contain"
         />
         <div class="app-head-text">
-          <span class="music-title">糖心直播娘</span>
+          <span class="music-title">糖心直播助手</span>
           <span style="font-size: 10px; padding-left: 10px; color: #333"
             >——您贴心的直播助手</span
           >
@@ -83,7 +83,7 @@
           <el-button
             class="app-head-btn closebtn"
             size="mini"
-            icon="el-icon-switch-button"
+            icon="el-icon-close"
           ></el-button>
         </el-tooltip>
       </el-popover>

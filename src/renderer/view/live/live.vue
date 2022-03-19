@@ -167,19 +167,20 @@ export default {
     padding: 0 5px;
     background: #ccc;
     &-title {
-      height: 120px;
+      height: 90px;
       // background: #ccc;
       padding-bottom: 5px;
     }
     &-body {
       // background: #ccc;
       flex: 1 1 auto;
-      height: calc(100% - 270px);
+      height: calc(100% - 240px);
     }
     &-foot {
       padding: 5px 0;
       // background: #ccc;
-      height: 150px;
+      min-height: 80px;
+      max-height: 160px;
     }
   }
   &-message {
