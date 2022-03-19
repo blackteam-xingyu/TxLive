@@ -1,11 +1,11 @@
 <template>
   <div class="content">
-    <div class="content-title">直播工具</div>
+    <div class="content-title">实时弹幕</div>
   </div>
 </template>
 <script>
 export default {
-  name: "tool",
+  name: "danmu",
   data() {
     return {};
   },
@@ -20,6 +20,7 @@ export default {
   background: #fff;
   border-radius: 3px;
   box-shadow: 0px 0px 10px #999;
+  white-space: nowrap;
   overflow: hidden;
   &-title {
     border-bottom: 1px solid #ccc;
@@ -27,7 +28,6 @@ export default {
     line-height: 30px;
     font-size: 12px;
     padding-left: 10px;
-    white-space: nowrap;
     overflow: hidden;
   }
 }

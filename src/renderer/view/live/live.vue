@@ -13,30 +13,72 @@
         </div>
       </div>
     </div>
-    <div class="live-main"></div>
-    <div class="live-message"></div>
+    <div class="live-main">
+      <div class="live-main-title">
+        <maintitle></maintitle>
+      </div>
+      <div class="live-main-body">
+        <mainbody></mainbody>
+      </div>
+      <div class="live-main-foot">
+        <mainfoot></mainfoot>
+      </div>
+    </div>
+    <div class="live-message">
+      <div class="live-message-title">
+        <i
+          v-if="isMessage"
+          class="live-message-icon el-icon-s-unfold"
+          @click="closeMessage"
+        ></i>
+        <i
+          v-else
+          class="live-message-icon el-icon-s-fold"
+          @click="closeMessage"
+        ></i>
+      </div>
+      <div v-show="isMessage" class="live-message-body">
+        <div class="live-message-body-info"><info /></div>
+        <div class="live-message-body-gift"><gift /></div>
+        <div class="live-message-body-danmu"><danmu /></div>
+      </div>
+    </div>
   </div>
 </template>
 <script>
 import screen from "./components/screen.vue";
 import tool from "./components/tool.vue";
+import gift from "./components/gift.vue";
+import danmu from "./components/danmu.vue";
+import Info from "./components/info.vue";
+import maintitle from "./components/maintitle.vue";
+import Mainbody from "./components/mainbody.vue";
+import Mainfoot from "./components/mainfoot.vue";
 export default {
   name: "live",
   data() {
     return {
       isTools: true,
-
-      messageWidth: "250px",
+      isMessage: true,
     };
   },
   components: {
     screen,
     tool,
+    gift,
+    danmu,
+    Info,
+    maintitle,
+    Mainbody,
+    Mainfoot,
   },
   props: [],
   methods: {
     closeTools() {
       this.isTools = !this.isTools;
+    },
+    closeMessage() {
+      this.isMessage = !this.isMessage;
     },
   },
   mounted() {},
@@ -48,7 +90,11 @@ export default {
       };
     },
     toolsWidth() {
-      if (this.isTools) return "250px";
+      if (this.isTools) return "270px";
+      else return "30px";
+    },
+    messageWidth() {
+      if (this.isMessage) return "270px";
       else return "30px";
     },
   },
@@ -66,7 +112,7 @@ export default {
     // white-space: nowrap;
     transition: width 1s;
     background: #fff;
-    border-right: 1px solid #ccc;
+    // border-right: 1px solid #fff;
     .tip {
       width: 30px;
       margin-left: 6px;
@@ -80,11 +126,10 @@ export default {
       background: #fff;
     }
     &-body {
-      width: calc(100% + 1px);
+      width: 100%;
       height: calc(100% - 31px);
       display: flex;
       flex-direction: column;
-
       background: #ccc;
       &-screen,
       &-tool {
@@ -92,12 +137,14 @@ export default {
         display: flex;
       }
       &-screen {
-        flex: 5 1 auto;
-        padding: 0 5px 5px 5px;
+        overflow: auto;
+        height: 60%;
+        padding: 0 0 5px 5px;
       }
       &-tool {
-        flex: 4 1 auto;
-        padding: 5px;
+        overflow: auto;
+        height: 40%;
+        padding: 5px 0 5px 5px;
       }
     }
     &-icon {
@@ -111,14 +158,80 @@ export default {
     }
   }
   &-main {
-    flex: 1 1 auto;
-    // transition: width 2s;
+    // flex: 1 1 auto;
+    height: 100%;
+    transition: width 1s;
+    width: calc(100% - var(--message_width) - var(--tools_width));
+    display: flex;
+    flex-direction: column;
+    padding: 0 5px;
+    background: #ccc;
+    &-title {
+      height: 120px;
+      // background: #ccc;
+      padding-bottom: 5px;
+    }
+    &-body {
+      // background: #ccc;
+      flex: 1 1 auto;
+      height: calc(100% - 270px);
+    }
+    &-foot {
+      padding: 5px 0;
+      // background: #ccc;
+      height: 150px;
+    }
   }
   &-message {
     width: var(--message_width);
     height: 100%;
-    border-left: 1px solid #ccc;
-    transition: width 2s;
+    // border-left: 1px solid #fff;
+    transition: width 1s;
+    &-title {
+      width: 100%;
+      height: 30px;
+
+      border-bottom: 1px solid #ccc;
+      // text-align: right;
+      background: #fff;
+    }
+    &-body {
+      width: 100%;
+      height: calc(100% - 31px);
+      display: flex;
+      flex-direction: column;
+
+      background: #ccc;
+      &-info,
+      &-danmu,
+      &-gift {
+        border-radius: 3px;
+        display: flex;
+      }
+      &-danmu {
+        overflow: auto;
+        height: calc((100% - 31px) / 9 * 5);
+        padding: 0 5px 5px 0;
+      }
+      &-gift {
+        overflow: auto;
+        height: calc((100% - 31px) / 9 * 4);
+        padding: 0 5px 5px 0;
+      }
+      &-info {
+        height: 80px;
+        padding: 5px 5px 5px 0;
+      }
+    }
+    &-icon {
+      color: #333;
+      margin: 0 7px;
+      cursor: pointer;
+      line-height: 30px;
+      &:hover {
+        color: #409eff;
+      }
+    }
   }
 }
 </style>
