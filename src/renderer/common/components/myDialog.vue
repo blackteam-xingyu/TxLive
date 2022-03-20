@@ -8,6 +8,7 @@
     close-on-press-escape
   >
     <span>{{ content }}</span>
+    
     <span slot="footer" class="dialog-footer">
       <el-button @click="cancel" size="mini">取 消</el-button>
       <el-button type="danger" @click="yes" size="mini">确 定</el-button>
@@ -19,7 +20,9 @@
 export default {
   name: "my-dialog",
   data() {
-    return {};
+    return {
+      form: {},
+    };
   },
   props: {
     DialogVisible: {
@@ -37,10 +40,10 @@ export default {
   },
   methods: {
     yes() {
-      this.$emit("yes");
+      this.$emit("yes", this.form);
     },
     cancel() {
-      this.$emit("cancel");
+      this.$emit("cancel", this.form);
     },
   },
   mounted() {},

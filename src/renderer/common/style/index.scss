@@ -104,6 +104,26 @@ body {
     }
 }
 
+//滚动条样式
+::-webkit-scrollbar {
+    width : 10px;
+    height: 1px;
+}
+
+::-webkit-scrollbar-thumb {
+    //滑块部分
+    border-radius   : 5px;
+    background-color: #999;
+}
+
+::-webkit-scrollbar-track {
+    //轨道部分
+    box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+    background   : #eee;
+    border-radius: 5px;
+
+}
+
 //弹窗样式
 .el-dialog,
 .el-popover {

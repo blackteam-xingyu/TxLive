@@ -5,8 +5,11 @@
       <el-tooltip class="item" effect="dark" content="新建" placement="top">
         <i class="el-icon-plus" @click="newScreen"></i>
       </el-tooltip>
+      <el-tooltip class="item" effect="dark" content="打开" placement="top">
+        <i class="el-icon-folder-opened" @click="openScreens"></i>
+      </el-tooltip>
       <el-tooltip class="item" effect="dark" content="保存" placement="top">
-        <i class="el-icon-folder-checked"></i>
+        <i class="el-icon-folder-checked" @click="save"></i>
       </el-tooltip>
       <el-tooltip class="item" effect="dark" content="清空" placement="top">
         <i class="el-icon-delete" @click="clearTab"></i>
@@ -50,7 +53,7 @@
                 @click="trunLock(index, jndex)"
               ></i>
               <i class="el-icon-edit"></i>
-              <i class="el-icon-delete"></i>
+              <i class="el-icon-delete" @click="removeItem(index, jndex)"></i>
               <i></i>
             </div>
           </div>
@@ -62,7 +65,11 @@
         <i class="el-icon-circle-plus-outline"></i>
         <span>&nbsp;添加</span>
       </div>
-      <div class="content-foot-right">
+      <div class="content-foot-right" @click="renameScrenmItem">
+        <i class="el-icon-refresh"></i>
+        <span>&nbsp;重命名</span>
+      </div>
+      <div class="content-foot-right" @click="clearScreenItem">
         <i class="el-icon-delete"></i>
         <span>&nbsp;清空</span>
       </div>
@@ -86,19 +93,52 @@
       :destroy-on-close="true"
       :size="drawerSize"
     >
+      <el-card
+        v-for="(item, index) in screenMenu"
+        :key="index"
+        class="drawer-item"
+        shadow="hover"
+        :body-style="{ padding: '0', height: '100%' }"
+        @click.native="chooseScreenItem(item)"
+      >
+        <div class="drawer-item-img">
+          <i :class="`iconfont ${item.icon}`"></i>
+        </div>
+
+        <div class="drawer-item-title">{{ item.title }}</div>
+      </el-card>
+      <!-- <div
+        class="drawer-item"
+        v-for="(item, index) in screenMenu"
+        :key="index"
+      >
+
+      </div> -->
       <!-- <span>请选择需要添加的场景</span> -->
     </el-drawer>
+    <form-dialog
+      :items="formItems"
+      :title="formTitle"
+      :dialogVisible="formDialogVisible"
+      :defaults="formDefaults"
+      @yes="fromYes"
+      @cancel="formCancel"
+    ></form-dialog>
   </div>
 </template>
 <script>
 import myDialog from "@/common/components/myDialog.vue";
+import { screenMenu, screenName, openScreen } from "@/common/js/liveItem.js";
+import FormDialog from "../../../common/components/formDialog.vue";
+const fs = require("fs");
 export default {
-  components: { myDialog },
+  components: { myDialog, FormDialog },
   name: "screen",
   data() {
     return {
       screenTab: "0",
       screenList: [],
+      screenMenu: screenMenu,
       dialogVisible: false,
       title: "",
       content: "",
@@ -107,16 +147,24 @@ export default {
       screenItem: [],
       drawerTitle: "",
       drawer: false,
-      drawerSize: 200,
+      drawerSize: 270,
+      //*formDialog表单变量
+      formItems: [],
+      formTitle: "",
+      formDialogVisible: false,
+      formFunction: "",
+      formDefaults: {},
     };
   },
   props: [],
   methods: {
     removeScreen(val) {
       this.screenList.splice(Number(val), 1);
+      this.screenItem.splice(Number(val), 1);
     },
     clearScreen() {
       this.screenList = [];
+      this.screenItem = [];
     },
     removeTab(val) {
       this.dialogVisible = true;
@@ -127,34 +175,118 @@ export default {
     newScreen() {
       if (this.screenList.length < 10) {
         this.screenList.push(`场景${this.screenList.length + 1}`);
+        this.screenItem.push([]);
       } else {
-        this.$message({
-          showClose: true,
-          message: "最多只可添加10个场景哦！",
-          type: "error",
-        });
+        this.$message.error("最多只可添加10个场景哦！");
       }
     },
     clearTab() {
-      this.dialogVisible = true;
       this.title = "清空场景";
       this.content = "即将清空场景，请确认！";
       this.yesEval = `this.clearScreen()`;
+      this.dialogVisible = true;
     },
+    openScreens() {
+      this.formTitle = "打开文件";
+      this.formFunction = "openMyScreens";
+      this.formItems = openScreen;
+      this.formDialogVisible = true;
+    },
+    openMyScreens(val) {
+      if (val.filePath.includes("screen.conf")) {
+        if (fs.existsSync(val.filePath)) {
+          console.log("该路径已存在", val.filePath);
+          fs.readFile(val.filePath, "utf8", (err, data) => {
+            if (err) {
+              console.error(err);
+              return;
+            }
+            console.log(data);
+            const param = JSON.parse(data);
+            this.screenList = param.screenList;
+            this.screenItem = param.screenItem;
+            fs.writeFile(
+              `C:/ProgramData/TxLive/screen.conf`,
+              JSON.stringify(params),
+              (err) => {
+                if (err) {
+                  console.error(err);
+                  return;
+                }
+                //文件写入成功。
+              }
+            );
+          });
+          const params = {
+            screenList: this.screenList,
+            screenItem: this.screenItem,
+          };
+        } else {
+          this.$message.error("路径不存在请重新输入哦！");
+        }
+      } else {
+        this.$message.error("该文件不是配置场景配置文件哦！");
+      }
+    },
+    //#region 模块操作部分
     newScreenItem() {
-      this.drawerTitle="请选择模块添加"
-      const win = this.$electron.remote.getCurrentWindow();
-      const a = win.getSize()[0];
-      if (a > 1500) this.drawerSize = 400;
-      else this.drawerSize = 200;
-      // console.log(a);
-      this.drawer = true;
+      if (this.screenList.length > 0) {
+        this.drawerTitle = "请选择模块添加";
+        const win = this.$electron.remote.getCurrentWindow();
+        const a = win.getSize()[0];
+        if (a > 1500) this.drawerSize = 550;
+        else this.drawerSize = 280;
+        // console.log(a);
+        this.drawer = true;
+      } else {
+        this.$message.error("请先添加场景再新增模块哦！");
+      }
     },
+    renameScrenmItem() {
+      this.formItems = screenName;
+      this.formDefaults = {
+        screenName: this.screenList[Number(this.screenTab)],
+      };
+      this.formFunction = "rename";
+      console.log(
+        "this.formItems\n",
+        this.formItems,
+        "\nthis.formDefaults\n",
+        this.formDefaults
+      );
+      this.formDialogVisible = true;
+    },
+    rename(val) {
+      this.screenList[Number(this.screenTab)] = val.screenName;
+    },
+    clearScreenItem() {
+      if (this.screenList.length > 0) {
+        this.screenItem[Number(this.screenTab)] = [];
+      } else {
+        this.$message.error("请先添加场景再清空模块哦！");
+      }
+    },
+    chooseScreenItem(item) {
+      this.screenItem[Number(this.screenTab)].push(item);
+      this.drawer = false;
+    },
+    //#endregion
     trunShow(i, j) {
       this.screenItem[i][j].isShow = !this.screenItem[i][j].isShow;
     },
     trunLock(i, j) {
       this.screenItem[i][j].isLock = !this.screenItem[i][j].isLock;
+    },
+    removeItem(i, j) {
+      this.screenItem[i].splice(j, 1);
+    },
+    fromYes(val) {
+      let a = JSON.stringify(val);
+      eval(`this.${this.formFunction}(${a})`);
+      this.formDialogVisible = false;
+    },
+    formCancel() {
+      this.formDialogVisible = false;
     },
     yes(val) {
       if (val && val != "") {
@@ -165,6 +297,7 @@ export default {
       this.yesEval = "";
       this.dialogVisible = false;
     },
+
     cancel(val) {
       if (val && val != "") {
         eval(val);
@@ -177,8 +310,74 @@ export default {
     handleClose() {
       this.drawer = false;
     },
+    //保存文件
+    save() {
+      if (this.screenList.length > 0) {
+        this.dialogVisible = true;
+        this.title = "保存场景";
+        this.content = "保存场景到本地文件";
+        this.yesEval = `this.saveJson()`;
+      } else {
+        this.$message.error("没有场景可以保存哦");
+      }
+    },
+    saveJson() {
+      let param = {
+        screenList: this.screenList,
+        screenItem: this.screenItem,
+      };
+      fs.writeFile(
+        `C:/ProgramData/TxLive/screen.conf`,
+        JSON.stringify(param),
+        (err) => {
+          if (err) {
+            console.error(err);
+            return;
+          }
+          //文件写入成功。
+        }
+      );
+    },
   },
-  mounted() {},
+  created() {
+    if (fs.existsSync(`C:/ProgramData/TxLive/`)) {
+      console.log("该路径已存在");
+    } else {
+      console.log("该路径不存在");
+      fs.mkdirSync(`C:/ProgramData/TxLive/`);
+    }
+    fs.readFile(`C:/ProgramData/TxLive/screen.conf`, "utf8", (err, data) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      console.log(data);
+      const param = JSON.parse(data);
+      this.screenList = param.screenList;
+      this.screenItem = param.screenItem;
+    });
+  },
+  mounted() {
+    const loading = this.$loading({
+      lock: true,
+      text: "Loading",
+      spinner: "el-icon-loading",
+      background: "#fff",
+    });
+    setTimeout(() => {
+      loading.close();
+    }, 1000);
+  },
+  watch: {
+    formDialogVisible(newVal) {
+      if (newVal == false) {
+        this.formItems = [];
+        this.formTitle = "";
+        this.formFunction = "";
+        this.formDefaults = {};
+      }
+    },
+  },
 };
 </script>
 <style lang="scss" scoped>
@@ -259,7 +458,7 @@ export default {
     display: flex;
     &-left,
     &-right {
-      width: 50%;
+      width: 33%;
       height: 100%;
       display: flex;
       align-items: center;
@@ -276,5 +475,56 @@ export default {
       border-left: 1px solid #ccc;
     }
   }
+}
+/deep/.el-drawer__body {
+  display: flex;
+  flex-wrap: wrap;
+  .drawer-item {
+    margin: 0 10px 10px 10px;
+    width: 250px;
+    height: 250px * 9 / 16;
+    cursor: pointer;
+    color: #999;
+    &:hover {
+      color: #333;
+      .iconfont {
+        font-size: 55px;
+      }
+      .drawer-item-title {
+        font-weight: 600;
+      }
+    }
+    &:active {
+      color: #333;
+      .iconfont {
+        font-size: 45px;
+      }
+      .drawer-item-title {
+        font-weight: 400;
+      }
+    }
+    // position: relative;
+    &-img {
+      height: 70%;
+      width: 100%;
+      // position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      .iconfont {
+        font-size: 45px;
+      }
+    }
+    &-title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+  // .drawer-item:nth-child(2n) {
+  //   margin: 0 10px 10px 0;
+  //   width: 250px;
+  //   height: 250px * 9 / 16;
+  // }
 }
 </style>

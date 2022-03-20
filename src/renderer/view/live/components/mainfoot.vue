@@ -53,8 +53,18 @@
       ></el-slider>
     </div>
     <div class="content-right">
-      <el-button type="warning" plain round><i style="content:'';width"></i>录制</el-button>
-      <el-button type="danger" round>开始直播</el-button>
+      <el-button type="info" plain round icon="el-icon-camera">截屏</el-button>
+      <el-button type="warning" plain round icon="el-icon-video-camera">
+        录制
+      </el-button>
+      <el-button
+        type="danger"
+        round
+        icon="el-icon-video-play
+"
+      >
+        开始直播
+      </el-button>
     </div>
   </div>
 </template>
@@ -77,9 +87,9 @@ export default {
     turnMicrophone() {
       this.isMicrophone = !this.isMicrophone;
     },
-    turnMusic(){
-      this.isMusic=!this.isMusic
-    }
+    turnMusic() {
+      this.isMusic = !this.isMusic;
+    },
   },
   mounted() {},
 };
@@ -100,8 +110,8 @@ export default {
     align-items: center;
     // max-width: 1300px;
     // width: 40px;
-    &-btn + &-slider{
-      margin:0 20px;
+    &-btn + &-slider {
+      margin: 0 20px;
     }
     &-slider {
       min-width: 150px;

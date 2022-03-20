@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 3260595 */
-  src: url('iconfont.woff2?t=1647696821032') format('woff2'),
-       url('iconfont.woff?t=1647696821032') format('woff'),
-       url('iconfont.ttf?t=1647696821032') format('truetype');
+  src: url('iconfont.woff2?t=1647759430159') format('woff2'),
+       url('iconfont.woff?t=1647759430159') format('woff'),
+       url('iconfont.ttf?t=1647759430159') format('truetype');
 }
 
 [class^="icon-"], [class*=" icon-"] {
@@ -11,6 +11,66 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-permmedia:before {
+  content: "\ec85";
+}
+
+.icon-photo:before {
+  content: "\e68a";
+}
+
+.icon-lianxiwomen:before {
+  content: "\e62d";
+}
+
+.icon-browser:before {
+  content: "\e644";
+}
+
+.icon-danmu:before {
+  content: "\e624";
+}
+
+.icon-txt:before {
+  content: "\e6c3";
+}
+
+.icon-screen-share:before {
+  content: "\e93d";
+}
+
+.icon-speaker-fill:before {
+  content: "\e71c";
+}
+
+.icon-xianshiqi:before {
+  content: "\e637";
+}
+
+.icon-bayonet-camera-full:before {
+  content: "\e964";
+}
+
+.icon-tuiliujilu:before {
+  content: "\e81f";
+}
+
+.icon-microphone:before {
+  content: "\e674";
+}
+
+.icon-window:before {
+  content: "\e694";
+}
+
+.icon-gamepad-controller:before {
+  content: "\e617";
+}
+
+.icon-Screen-Filled:before {
+  content: "\e641";
 }
 
 .icon-xianshi:before {
