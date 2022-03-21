@@ -9,7 +9,7 @@
           <tool />
         </div>
         <div class="live-tools-body-screen">
-          <screen />
+          <screen @screenItemChanged="screenItemChanged" />
         </div>
       </div>
     </div>
@@ -18,7 +18,10 @@
         <maintitle></maintitle>
       </div>
       <div class="live-main-body">
-        <mainbody></mainbody>
+        <mainbody
+          :screenItemBase="screenItem"
+          
+        ></mainbody>
       </div>
       <div class="live-main-foot">
         <mainfoot></mainfoot>
@@ -60,6 +63,7 @@ export default {
     return {
       isTools: true,
       isMessage: true,
+      screenItem: [],
     };
   },
   components: {
@@ -79,6 +83,10 @@ export default {
     },
     closeMessage() {
       this.isMessage = !this.isMessage;
+    },
+    screenItemChanged(val) {
+      console.log("screenItemChanged触发")
+      this.screenItem = val;
     },
   },
   mounted() {},
@@ -175,6 +183,8 @@ export default {
       // background: #ccc;
       flex: 1 1 auto;
       height: calc(100% - 240px);
+      display: flex;
+      align-items: center;
     }
     &-foot {
       padding: 5px 0;

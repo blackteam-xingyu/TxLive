@@ -68,7 +68,15 @@
       <el-popover placement="top" width="160" v-model="visible">
         <p>是否关闭TxLive</p>
         <div style="text-align: right; margin: 0">
-          <el-button @click="visible = false" size="mini" type="info" plain round> 取 消 </el-button>
+          <el-button
+            @click="visible = false"
+            size="mini"
+            type="info"
+            plain
+            round
+          >
+            取 消
+          </el-button>
           <el-button type="danger" @click="stopApp" size="mini" round>
             确 定
           </el-button>
@@ -88,24 +96,13 @@
         </el-tooltip>
       </el-popover>
     </div>
-    <!-- <el-dialog
-      title="即将关闭软件"
-      :visible.sync="dialogVisible"
-      width="200px"
-      center
-      :modal-append-to-body="false"
-      close-on-press-escape
-    >
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false" size="mini">取 消</el-button>
-        <el-button type="danger" @click="stopApp" size="mini">确 定</el-button>
-      </span>
-    </el-dialog> -->
+
     <router-view></router-view>
   </div>
 </template>
 
 <script>
+const remote = require('@electron/remote')
 export default {
   name: "txlive",
   data() {
@@ -121,11 +118,11 @@ export default {
       this.dialogVisible = true;
     },
     stopApp() {
-      // console.log(this.$electron);
-      this.$electron.remote.app.quit();
+      console.log("关闭TxLive");
+      remote.app.exit();
     },
     maxAndReback() {
-      const win = this.$electron.remote.getCurrentWindow();
+      const win = remote.getCurrentWindow();
       console.log(win);
       if (this.isFullScreen == true) {
         this.isFullScreen = false;
@@ -138,7 +135,7 @@ export default {
       }
     },
     minWindow() {
-      const win = this.$electron.remote.getCurrentWindow();
+      const win = remote.getCurrentWindow();
       win.minimize();
     },
     dropDown(e) {

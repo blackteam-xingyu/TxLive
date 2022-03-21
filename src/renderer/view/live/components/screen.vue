@@ -130,6 +130,7 @@
 import myDialog from "@/common/components/myDialog.vue";
 import { screenMenu, screenName, openScreen } from "@/common/js/liveItem.js";
 import FormDialog from "../../../common/components/formDialog.vue";
+const remote = require("@electron/remote");
 const fs = require("fs");
 export default {
   components: { myDialog, FormDialog },
@@ -193,7 +194,7 @@ export default {
       this.formDialogVisible = true;
     },
     openMyScreens(val) {
-      if (val.filePath.includes("screen.conf")) {
+      if (val.filePath.includes(".conf")) {
         if (fs.existsSync(val.filePath)) {
           console.log("该路径已存在", val.filePath);
           fs.readFile(val.filePath, "utf8", (err, data) => {
@@ -203,19 +204,23 @@ export default {
             }
             console.log(data);
             const param = JSON.parse(data);
-            this.screenList = param.screenList;
-            this.screenItem = param.screenItem;
-            fs.writeFile(
-              `C:/ProgramData/TxLive/screen.conf`,
-              JSON.stringify(params),
-              (err) => {
-                if (err) {
-                  console.error(err);
-                  return;
+            if (param.screenList) {
+              this.screenList = param.screenList;
+              this.screenItem = param.screenItem;
+              fs.writeFile(
+                `C:/ProgramData/TxLive/screen.conf`,
+                JSON.stringify(params),
+                (err) => {
+                  if (err) {
+                    console.error(err);
+                    return;
+                  }
+                  //文件写入成功。
                 }
-                //文件写入成功。
-              }
-            );
+              );
+            } else {
+              this.$message.error("该文件不是配置场景配置文件哦！");
+            }
           });
           const params = {
             screenList: this.screenList,
@@ -232,7 +237,7 @@ export default {
     newScreenItem() {
       if (this.screenList.length > 0) {
         this.drawerTitle = "请选择模块添加";
-        const win = this.$electron.remote.getCurrentWindow();
+        const win = remote.getCurrentWindow();
         const a = win.getSize()[0];
         if (a > 1500) this.drawerSize = 550;
         else this.drawerSize = 280;
@@ -377,6 +382,21 @@ export default {
         this.formDefaults = {};
       }
     },
+    screenItem: {
+      handler(newVal, oldVal) {
+        console.log("screenItem Changed\n", newVal);
+        this.$emit("screenItemChanged", newVal[Number(this.screenTab)]);
+      },
+      immediate: true,
+      deep: true,
+    },
+    screenTab: {
+      handler(newVal, oldVal) {
+        console.log("screenTab Changed\n", newVal);
+        this.$emit("screenItemChanged", this.screenItem[Number(newVal)]);
+      },
+      immediate: true,
+    },
   },
 };
 </script>
@@ -414,7 +434,14 @@ export default {
     height: calc(100% - 70px);
     /deep/.el-tabs__item {
       font-size: 10px !important;
-      padding: 0 10px !important;
+      padding: 0 15px !important;
+      height: 30px !important;
+      line-height: 30px !important;
+    }
+    /deep/.el-tabs__nav-prev,
+    /deep/.el-tabs__nav-next {
+      font-size: 10px !important;
+      // padding: 0 10px !important;
       height: 30px !important;
       line-height: 30px !important;
     }

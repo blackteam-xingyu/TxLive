@@ -4,9 +4,11 @@
     :visible.sync="dialog"
     center
     @open="open"
+    @close="cancel"
     width="30%"
     :modal-append-to-body="false"
     close-on-press-escape
+    :close-on-click-modal="false"
   >
     <el-form
       ref="dialogForm"

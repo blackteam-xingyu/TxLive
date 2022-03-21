@@ -22,6 +22,8 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true,
+
+      contextIsolation: false
     },
     useContentSize: true,
     width: 1000,
@@ -34,7 +36,8 @@ function createWindow() {
     minimizable: true,
     resizable: true,
   })
-
+  require('@electron/remote/main').initialize()
+  require("@electron/remote/main").enable(mainWindow.webContents)
   mainWindow.loadURL(winURL)
 
   mainWindow.on('closed', () => {

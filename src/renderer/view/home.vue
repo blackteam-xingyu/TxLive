@@ -51,6 +51,7 @@
   </div>
 </template>
 <script>
+const remote = require('@electron/remote')
 export default {
   name: "name",
   data() {
@@ -68,7 +69,7 @@ export default {
   props: [],
   methods: {
     quit() {
-      this.$electron.remote.app.quit();
+      remote.app.quit();
     },
     newLive() {
       this.$router.push("/live");
