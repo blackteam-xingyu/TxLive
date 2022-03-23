@@ -1,5 +1,5 @@
 <template>
-  <video ref="myVideo" class="content-camera" autoplay></video>
+  <video ref="myVideo" class="content-camera" autoplay :style="cssVars"></video>
 </template>
 <script>
 export default {
@@ -7,15 +7,27 @@ export default {
   data() {
     return {};
   },
-  props: [],
+  props: {
+    options: {
+      type: Object,
+      // default: {},
+    },
+    zIndex: {
+      type: Number,
+      default: 0,
+    },
+  },
   methods: {
     async UsingMedia() {
+      // console.log(await this.$electron.desktopCapturer.getSources({ types: ['window', 'screen'] }))
+      console.log(this.$electron);
       let mydeviecs = await navigator.mediaDevices.enumerateDevices();
-      console.log(mydeviecs);
+      console.log("mydeviecs\n", mydeviecs);
       let stream = await navigator.mediaDevices.getUserMedia({
         video: {
-          width: { max: 800 },
-          height: { max: 600 },
+          width: { min: this.options.dpiWidth, max: this.options.dpiWidth },
+          height: { min: this.options.dpiHeight, max: this.options.dpiHeight },
+          deviceId: this.options.cameraID ? this.options.cameraID : "default",
         },
         audio: false,
       });
@@ -25,6 +37,18 @@ export default {
   mounted() {
     this.UsingMedia();
   },
+  computed: {
+    cssVars() {
+      return {
+        "--sizeW": (this.options.sizeW / this.options.dpiWidth) * 100 + "%",
+        "--sizeH": (this.options.sizeH / this.options.dpiHeight) * 100 + "%",
+        "--zIndex": this.zIndex,
+        "--rotate": `rotate(${this.options.angle}deg) rotateY(${
+          this.options.isCameraY ? 180 : 0
+        }deg) rotateX(${this.options.isCameraX ? 180 : 0}deg)`,
+      };
+    },
+  },
   watch: {},
 };
 </script>
@@ -32,17 +56,18 @@ export default {
 .content-camera {
   cursor: grab;
   position: absolute;
-  // background: red;
-  width: 200 / 1920 * 100vw;
-  height: 200 / 1920 / 4 * 3 * 100vw;
-  z-index: 1;
-  //   border: 1px solid rgba($color: #000000, $alpha: 0.0);
+  width: var(--sizeW);
+  height: var(--sizeH);
+  z-index: var(--zIndex);
+  transform: var(--rotate);
+  background: #333;
   &:hover {
-    border: 1px solid #f00;
+    border: 1px solid #ff000080;
     cursor: move;
   }
   &:active {
     cursor: grabbing;
+    border: 1px solid #ff0000;
   }
 }
 </style>

@@ -19,13 +19,12 @@ Vue.directive('drag', {
   //3.通过el.focus()是无法获取焦点的，因为只有插入DOM后才生效
   bind: function (el) { },
   //inserted表示一个元素，插入到DOM中会执行inserted函数，只触发一次
-  inserted: function (el) {
+  inserted: function (el, binding) {
     let odiv = el; //获取当前元素
-    let fdiv = el.parentNode;
     console.log("el\n", el)
     console.log("el.parentNode\n", el.parentNode)
     let firstTime = '', lastTime = '';
-    el.onmousedown = function (e) {
+    let mouseDownEvent = function (e) {
       var disx = e.pageX - el.offsetLeft;
       var disy = e.pageY - el.offsetTop;
 
@@ -40,10 +39,10 @@ Vue.directive('drag', {
         let b = el.parentNode.offsetHeight - el.offsetHeight;
         if (l < 0) el.style.left = 0
         else if (l > r) el.style.left = r
-        else el.style.left = l / el.parentNode.offsetWidth *100  + '%';
+        else el.style.left = l / el.parentNode.offsetWidth * 100 + '%';
         if (t < 0) el.style.top = 0
         else if (t > b) el.style.top = b
-        else el.style.top = t / el.parentNode.offsetHeight *100 + '%';
+        else el.style.top = t / el.parentNode.offsetHeight * 100 + '%';
 
       }
       document.onmouseup = function (event) {
@@ -58,7 +57,20 @@ Vue.directive('drag', {
         }, 16.66)
       }
     }
+    el.updateonmousedown = function (value) {
+      if (value == true || value == null) {
+        el.addEventListener('mousedown', mouseDownEvent)
+      } else {
+        el.removeEventListener('mousedown', mouseDownEvent)
+      }
+    }
+    el.updateonmousedown(binding.value)
+  },
+  update: function (el, binding) {
+    el.updateonmousedown(binding.value)
   }
+
+
 })
 /* eslint-disable no-new */
 new Vue({

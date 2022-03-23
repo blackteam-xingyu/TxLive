@@ -5,9 +5,9 @@
       <el-tooltip class="item" effect="dark" content="新建" placement="top">
         <i class="el-icon-plus" @click="newScreen"></i>
       </el-tooltip>
-      <el-tooltip class="item" effect="dark" content="打开" placement="top">
+      <!-- <el-tooltip class="item" effect="dark" content="打开" placement="top">
         <i class="el-icon-folder-opened" @click="openScreens"></i>
-      </el-tooltip>
+      </el-tooltip> -->
       <el-tooltip class="item" effect="dark" content="保存" placement="top">
         <i class="el-icon-folder-checked" @click="save"></i>
       </el-tooltip>
@@ -93,20 +93,26 @@
       :destroy-on-close="true"
       :size="drawerSize"
     >
-      <el-card
+      <el-tooltip
         v-for="(item, index) in screenMenu"
         :key="index"
-        class="drawer-item"
-        shadow="hover"
-        :body-style="{ padding: '0', height: '100%' }"
-        @click.native="chooseScreenItem(item)"
+        effect="dark"
+        :content="index > 7 ? '敬请期待' : item.title"
+        placement="left"
       >
-        <div class="drawer-item-img">
-          <i :class="`iconfont ${item.icon}`"></i>
-        </div>
+        <el-card
+          :class="index > 7 ? 'drawer-disabled' : 'drawer-item'"
+          shadow="hover"
+          :body-style="{ padding: '0', height: '100%' }"
+          @click.native="index > 7 ? null : chooseScreenItem(item)"
+        >
+          <div class="drawer-item-img">
+            <i :class="`iconfont ${item.icon}`"></i>
+          </div>
 
-        <div class="drawer-item-title">{{ item.title }}</div>
-      </el-card>
+          <div class="drawer-item-title">{{ item.title }}</div>
+        </el-card>
+      </el-tooltip>
       <!-- <div
         class="drawer-item"
         v-for="(item, index) in screenMenu"
@@ -506,6 +512,13 @@ export default {
 /deep/.el-drawer__body {
   display: flex;
   flex-wrap: wrap;
+  .drawer-disabled {
+    cursor: not-allowed !important;
+    margin: 0 10px 10px 10px;
+    width: 250px;
+    height: 250px * 9 / 16;
+    color: #999;
+  }
   .drawer-item {
     margin: 0 10px 10px 10px;
     width: 250px;

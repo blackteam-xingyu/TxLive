@@ -4,21 +4,59 @@ export const screenMenu = [
         type: 0,
         isShow: true,
         isLock: false,
-        icon: "icon-bayonet-camera-full"
+        icon: "icon-bayonet-camera-full",
+        options: {
+            mask: {
+                light: 128,
+                contrast: 32,
+                hue: 0,
+                Saturation: 64,
+            },
+            cameraName: "",
+            cameraID: "",
+            dpiWidth: 1280,
+            dpiHeight: 720,
+            isCameraX: true,
+            isCameraY: false,
+            angle: 0,
+            sizeW: 360,
+            sizeH: 202.5,
+            darg: true,
+        }
     },
     {
         title: "窗口捕捉",
         type: 1,
         isShow: true,
         isLock: false,
-        icon: "icon-window"
+        icon: "icon-window",
+        options: {
+            windowName: "",
+            windowID: "",
+            mask: {
+                light: 128,
+                contrast: 32,
+                hue: 0,
+                Saturation: 64,
+            },
+            sizeW: 1920,
+            sizeH: 1080,
+            darg: false
+
+        }
     },
     {
         title: "游戏进程",
         type: 2,
         isShow: true,
         isLock: false,
-        icon: "icon-gamepad-controller"
+        icon: "icon-gamepad-controller",
+        options: {
+            gameName: "",
+            gameID: "",
+            fps: 60,
+            darg: false
+        }
     },
     {
         title: "显示器捕捉",
@@ -32,14 +70,34 @@ export const screenMenu = [
         type: 4,
         isShow: true,
         isLock: false,
-        icon: "icon-photo"
+        icon: "icon-photo",
+        options: {
+            srcUrl: "",
+            photoTypeID: "2",
+            sizeW: 240,
+            sizeH: 135,
+            darg: true
+        }
     },
     {
         title: "文字",
         type: 5,
         isShow: true,
         isLock: false,
-        icon: "icon-txt"
+        icon: "icon-txt",
+        options: {
+            text: "文字内容",
+
+            textStyle: {
+                color: "#409EFF",
+                background: "transparent",
+                fontFamily: "Microsoft YaHei",
+                fontSize: `${14 / 1920 * 100}%`,
+                textShadow: "transparent",
+            },
+            darg: true
+
+        }
     },
     {
         title: "麦克风",
@@ -51,8 +109,8 @@ export const screenMenu = [
     {
         title: "扬声器",
         type: 7,
-        isShow: true,
-        isLock: false,
+        // isShow: true,
+        // isLock: false,
         icon: "icon-speaker-fill"
     },
     {
@@ -60,14 +118,43 @@ export const screenMenu = [
         type: 8,
         isShow: true,
         isLock: false,
-        icon: "icon-danmu"
+        icon: "icon-danmu",
+        options: {
+            sizeW: 270,
+            sizeH: 810,
+            darg: true,
+            textStyle: {
+                color: "#409EFF",
+                background: "transparent",
+                fontFamily: "Microsoft YaHei",
+                fontSize: `${14 / 1920 * 100}%`,
+                textShadow: "transparent",
+            },
+            titleStyle: {
+                color: "#409EFF",
+                background: "transparent",
+                fontFamily: "Microsoft YaHei",
+                fontSize: `${14 / 1920 * 100}%`,
+                textShadow: "transparent",
+            },
+        }
     },
     {
         title: "截屏捕捉",
         type: 9,
         isShow: true,
         isLock: false,
-        icon: "icon-Screen-Filled"
+        icon: "icon-Screen-Filled",
+        options: {
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0,
+            sizeW: 1920,
+            sizeH: 1080,
+            darg: false,
+
+        }
     },
     {
         title: "投屏",
