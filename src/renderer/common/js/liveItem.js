@@ -6,18 +6,11 @@ export const screenMenu = [
         isLock: false,
         icon: "icon-bayonet-camera-full",
         options: {
-            mask: {
-                light: 128,
-                contrast: 32,
-                hue: 0,
-                Saturation: 64,
-            },
-            cameraName: "",
             cameraID: "",
             dpiWidth: 1280,
             dpiHeight: 720,
-            isCameraX: true,
-            isCameraY: false,
+            isCameraX: false,
+            isCameraY: true,
             angle: 0,
             sizeW: 360,
             sizeH: 202.5,
@@ -41,7 +34,7 @@ export const screenMenu = [
             },
             sizeW: 1920,
             sizeH: 1080,
-            darg: false
+            darg: true
 
         }
     },
@@ -215,3 +208,38 @@ export const openScreen = [
         }
     }
 ]
+// export const cameraEdit = [
+//     {
+//         label: "相机选择",
+//         formtype: "select",
+//         field: "cameraID",
+//         require: true,//是否校验
+//         rule: [{ required: true, message: "必须选择一个相机", trigger: "blur" }],//校验规则
+//         async options() {
+//             const mydeviecs = await navigator.mediaDevices.enumerateDevices();
+//             let deviecs = mydeviecs.filter(item => item.kind === "videoinput");
+//             let options = [];
+//             deviecs.forEach(element => {
+//                 options.push({
+//                     label: element.label,
+//                     value: element.deviceId
+//                 })
+//             });
+//             return options;
+//         }
+//     },
+//     {
+//         label: "dpi宽度",
+//         formtype: "",
+//         field: "dpiWidth",
+//         require: false,//是否校验
+//         rule: [],//校验规则
+//     },
+//     {
+//         label: "dpi高度",
+//         formtype: "",
+//         field: "dpiHeight",
+//         require: false,//是否校验
+//         rule: [],//校验规则
+//     },
+// ]

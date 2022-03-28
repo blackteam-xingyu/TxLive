@@ -1,5 +1,5 @@
 <template>
-  <video ref="myWindow" class="content-main" autoplay :style="cssVars"></video>
+  <video ref="myWindow" class="content-main" autoplay ></video>
 </template>
 <script>
 const { desktopCapturer } = require("electron");
@@ -21,11 +21,11 @@ export default {
       );
 
       let stream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          mandatory: {
-            chromeMediaSource: "desktop",
-          },
-        },
+        // audio: {
+        //   mandatory: {
+        //     chromeMediaSource: "desktop",
+        //   },
+        // },
         video: {
           mandatory: {
             chromeMediaSource: "desktop",

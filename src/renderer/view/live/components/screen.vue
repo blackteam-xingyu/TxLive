@@ -52,7 +52,7 @@
                 class="el-icon-unlock"
                 @click="trunLock(index, jndex)"
               ></i>
-              <i class="el-icon-edit"></i>
+              <i class="el-icon-edit" @click="edit(jtem, jndex)"></i>
               <i class="el-icon-delete" @click="removeItem(index, jndex)"></i>
               <i></i>
             </div>
@@ -130,16 +130,23 @@
       @yes="fromYes"
       @cancel="formCancel"
     ></form-dialog>
+    <camera-dialog
+      :defaults="cameraDefaults"
+      :dialogVisible="cameraDialogVisible"
+      @yes="cameraYes"
+      @cancel="cameraCancel"
+    ></camera-dialog>
   </div>
 </template>
 <script>
 import myDialog from "@/common/components/myDialog.vue";
 import { screenMenu, screenName, openScreen } from "@/common/js/liveItem.js";
 import FormDialog from "../../../common/components/formDialog.vue";
+import CameraDialog from "./ItemDialogs/cameraDialog.vue";
 const remote = require("@electron/remote");
 const fs = require("fs");
 export default {
-  components: { myDialog, FormDialog },
+  components: { myDialog, FormDialog, CameraDialog },
   name: "screen",
   data() {
     return {
@@ -161,6 +168,12 @@ export default {
       formDialogVisible: false,
       formFunction: "",
       formDefaults: {},
+      //*cameraDialog相机变量
+      cameraDialogVisible: false,
+      cameraDefaults: {},
+      itemModelCache: {},
+      itemIndexCache: null,
+      isNew: false,
     };
   },
   props: [],
@@ -278,7 +291,58 @@ export default {
       }
     },
     chooseScreenItem(item) {
-      this.screenItem[Number(this.screenTab)].push(item);
+      this.itemModelCache = item;
+      this.isNew = true;
+      switch (item.type) {
+        case 0:
+          this.cameraDialog(item);
+          break;
+        default:
+          this.screenItem[Number(this.screenTab)].push(item);
+          this.drawer = false;
+          break;
+      }
+    },
+    edit(item, index) {
+      this.itemModelCache = { ...item };
+      switch (item.type) {
+        case 0:
+          this.cameraDialog(item);
+          break;
+
+        default:
+          break;
+      }
+    },
+    //模块dialog配置
+    //摄像头
+    cameraDialog(item) {
+      this.cameraDefaults = item.options;
+      this.cameraDialogVisible = true;
+    },
+    cameraYes(val) {
+      this.itemModelCache.options = val;
+      if (this.isNew) {
+        this.screenItem[Number(this.screenTab)].push(this.itemModelCache);
+      } else {
+        this.screenItem[Number(this.screenTab)][this.itemIndexCache] = {
+          ...this.itemModelCache,
+        };
+      }
+
+      this.clearItemCache();
+      this.cameraDialogVisible = false;
+    },
+    cameraCancel() {
+      this.clearItemCache();
+      this.cameraDialogVisible = false;
+    },
+    //窗口
+
+    clearItemCache() {
+      this.isNew = false;
+      this.itemModelCache = {};
+      this.itemIndexCache = null;
       this.drawer = false;
     },
     //#endregion
@@ -455,18 +519,19 @@ export default {
       height: 40px;
       display: flex;
       padding: 0 10px;
-      color: #bbb;
+      color: #999;
       font-size: 14px;
       display: flex;
       align-items: center;
+      cursor: pointer;
       &:hover {
         background-color: #f0f9eb;
-        color: #aaa;
+        color: #666;
       }
       &:focus {
         outline: transparent;
         background-color: #e1f3d8;
-        color: #999;
+        color: #333;
       }
       &-title {
         flex: 1 1 auto;

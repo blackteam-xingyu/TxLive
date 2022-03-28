@@ -1,9 +1,37 @@
 <template>
   <div class="content">
-    <camera v-drag :options="cameraOptions" :zIndex="10"></camera>
-    <windows></windows>
-    <screen></screen>
-    <process></process>
+    <camera
+      v-for="(item, index) in screenItem"
+      v-if="item.type === 0"
+      v-show="item.isShow"
+      v-drag="!item.isLock"
+      :options="item.options"
+      :zIndex="screenItem.length - index"
+    ></camera>
+    <windows
+      v-for="(item, index) in screenItem"
+      v-if="item.type === 1"
+      v-show="item.isShow"
+      v-drag="!item.isLock"
+      :options="item.options"
+      :zIndex="screenItem.l"
+    ></windows>
+    <screen
+      v-for="(item, index) in screenItem"
+      v-if="item.type === 3"
+      v-show="item.isShow"
+      v-drag="false"
+      :options="item.options"
+      :zIndex="screenItem.l"
+    ></screen>
+    <process
+      v-for="(item, index) in screenItem"
+      v-if="item.type === 2"
+      v-show="item.isShow"
+      v-drag="false"
+      :options="item.options"
+      :zIndex="screenItem.l"
+    ></process>
   </div>
 </template>
 <script>
@@ -18,24 +46,6 @@ export default {
   data() {
     return {
       screenItem: [],
-      cameraOptions: {
-        mask: {
-          light: 128,
-          contrast: 32,
-          hue: 0,
-          Saturation: 64,
-        },
-        cameraName: "",
-        cameraID: "",
-        dpiWidth: 1280,
-        dpiHeight: 720,
-        isCameraX: false,
-        isCameraY: true,
-        angle: 0,
-        sizeW: 360,
-        sizeH: 202.5,
-        darg: true,
-      },
     };
   },
   props: ["screenItemBase"],

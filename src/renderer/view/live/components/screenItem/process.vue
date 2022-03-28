@@ -1,5 +1,5 @@
 <template>
-  <video ref="myWindow" class="content-main" autoplay :style="cssVars"></video>
+  <video ref="myWindow" class="content-main" autoplay ></video>
 </template>
 <script>
 const { desktopCapturer } = require("electron");

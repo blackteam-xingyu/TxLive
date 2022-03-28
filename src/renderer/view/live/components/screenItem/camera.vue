@@ -20,9 +20,7 @@ export default {
   methods: {
     async UsingMedia() {
       // console.log(await this.$electron.desktopCapturer.getSources({ types: ['window', 'screen'] }))
-      console.log(this.$electron);
-      let mydeviecs = await navigator.mediaDevices.enumerateDevices();
-      console.log("mydeviecs\n", mydeviecs);
+
       let stream = await navigator.mediaDevices.getUserMedia({
         video: {
           width: { min: this.options.dpiWidth, max: this.options.dpiWidth },
@@ -44,12 +42,16 @@ export default {
         "--sizeH": (this.options.sizeH / this.options.dpiHeight) * 100 + "%",
         "--zIndex": this.zIndex,
         "--rotate": `rotate(${this.options.angle}deg) rotateY(${
-          this.options.isCameraY ? 180 : 0
-        }deg) rotateX(${this.options.isCameraX ? 180 : 0}deg)`,
+          this.options.isCameraY? 180 : 0
+        }deg) rotateX(${this.options.isCameraX? 180 : 0}deg)`,
       };
     },
   },
-  watch: {},
+  watch: {
+    cssVars(newVal) {
+      console.log("cssVars", newVal);
+    },
+  },
 };
 </script>
 <style lang="scss" scoped>

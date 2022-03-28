@@ -18,10 +18,7 @@
         <maintitle></maintitle>
       </div>
       <div class="live-main-body">
-        <mainbody
-          :screenItemBase="screenItem"
-          
-        ></mainbody>
+        <mainbody :screenItemBase="screenItem"></mainbody>
       </div>
       <div class="live-main-foot">
         <mainfoot></mainfoot>
@@ -85,7 +82,7 @@ export default {
       this.isMessage = !this.isMessage;
     },
     screenItemChanged(val) {
-      console.log("screenItemChanged触发")
+      console.log("screenItemChanged触发");
       this.screenItem = val;
     },
   },
@@ -106,6 +103,7 @@ export default {
       else return "30px";
     },
   },
+  watch: {},
 };
 </script>
 <style lang="scss" scoped>
