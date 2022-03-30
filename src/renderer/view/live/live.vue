@@ -18,7 +18,7 @@
         <maintitle></maintitle>
       </div>
       <div class="live-main-body">
-        <mainbody :screenItemBase="screenItem"></mainbody>
+        <mainbody ref="mainbody" :screenItemBase="screenItem"></mainbody>
       </div>
       <div class="live-main-foot">
         <mainfoot></mainfoot>
@@ -178,11 +178,14 @@ export default {
       padding-bottom: 5px;
     }
     &-body {
-      // background: #ccc;
+      background: #333;
       flex: 1 1 auto;
       height: calc(100% - 240px);
       display: flex;
       align-items: center;
+      justify-content: center;
+      border-radius: 3px;
+      overflow: hidden;
     }
     &-foot {
       padding: 5px 0;

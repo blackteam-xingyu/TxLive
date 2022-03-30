@@ -1,5 +1,10 @@
 <template>
-  <video ref="myWindow" class="content-main" autoplay :style="cssVars"></video>
+  <video
+    ref="myWindow"
+    class="content-window"
+    autoplay
+    :style="cssVars"
+  ></video>
 </template>
 <script>
 const { desktopCapturer } = require("electron");
@@ -12,35 +17,27 @@ export default {
     options: {
       type: Object,
     },
+    zIndex: {
+      type: Number,
+      default: 0,
+    },
   },
   methods: {
     async UsingMedia() {
-      //   let mydeviecs = await navigator.mediaDevices.enumerateDevices();
-      //   console.log(mydeviecs);
       console.log(
         "desktopCapturer\n",
         await desktopCapturer.getSources({ types: ["window", "screen"] })
       );
-
       let stream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          mandatory: {
-            chromeMediaSource: "desktop",
-            chromeMediaSourceId: this.options.windowID,
-          },
-        },
+        audio: false,
         video: {
           mandatory: {
             chromeMediaSource: "desktop",
             chromeMediaSourceId: this.options.windowID,
-            minWidth: this.options.dpiWidth,
-            maxWidth: this.options.dpiWidth,
-            minHeight: this.options.dpiHeight,
-            maxHeight: this.options.dpiHeight,
           },
         },
       });
-      console.log(stream ? true : false);
+      // console.log(stream ? true : false);
       this.$refs.myWindow.srcObject = stream;
     },
   },
@@ -50,19 +47,25 @@ export default {
   computed: {
     cssVars() {
       return {
-        "--sizeW": (this.options.sizeW / this.options.dpiWidth) * 100 + "%",
-        "--sizeH": (this.options.sizeH / this.options.dpiHeight) * 100 + "%",
+        "--sizeW": this.options.sizeW + "%",
+        "--sizeH": this.options.sizeH + "%",
         "--zIndex": this.zIndex,
-        // "--rotate": `rotate(${this.options.angle}deg) rotateY(${
-        //   this.options.isCameraY ? 180 : 0
-        // }deg) rotateX(${this.options.isCameraX ? 180 : 0}deg)`,
       };
+    },
+  },
+  watch: {
+    "options.windowID": {
+      handler(newVal) {
+        this.UsingMedia();
+      },
+      immediate: true,
+      deep: true,
     },
   },
 };
 </script>
 <style lang="scss" scoped>
-.content-main {
+.content-window {
   cursor: grab;
   position: absolute;
   width: var(--sizeW);

@@ -5,7 +5,7 @@
     center
     @open="open"
     @close="cancel"
-    width="30%"
+    width="460px"
     :modal-append-to-body="false"
     close-on-press-escape
     :close-on-click-modal="false"
@@ -28,6 +28,16 @@
         <el-select v-if="item.formtype == 'select'" v-model="form[item.field]">
           <el-option
             v-for="(jtem, jndex) in item.options"
+            :label="jtem.label"
+            :value="jtem.value"
+          ></el-option>
+        </el-select>
+        <el-select
+          v-if="item.formtype == 'selectWindow'"
+          v-model="form[item.field]"
+        >
+          <el-option
+            v-for="(jtem, jndex) in windowSelectOptions"
             :label="jtem.label"
             :value="jtem.value"
           ></el-option>
@@ -84,6 +94,15 @@
             @click="btnChange(item.field)"
           ></el-button>
         </el-input>
+        <el-slider
+          v-else-if="item.formtype == 'slider'"
+          v-model="form[item.field]"
+          :min="item.sliderOptions.min"
+          :max="item.sliderOptions.max"
+          :show-input="item.sliderOptions.showInput"
+          :step="item.sliderOptions.step ? item.sliderOptions.step : 0.01"
+        >
+        </el-slider>
         <el-input v-else v-model="form[item.field]"></el-input>
         <input
           v-if="item.formtype == 'file'"
@@ -102,6 +121,7 @@
   </el-dialog>
 </template>
 <script>
+const { desktopCapturer } = require("electron");
 export default {
   name: "form-dialog",
   data() {
@@ -109,6 +129,7 @@ export default {
       form: {},
       fileField: "",
       dialog: false,
+      windowSelectOptions: [],
     };
   },
   props: ["defaults", "items", "dialogVisible", "title"],
@@ -136,6 +157,7 @@ export default {
       this.$emit("cancel");
     },
     open() {
+      this.getWindows();
       console.log("this.items\n", this.items);
       this.items.forEach((element) => {
         this.$set(this.form, element.field, null);
@@ -160,6 +182,18 @@ export default {
       var file = document.getElementById("file");
       this.fileField = val;
       file.click();
+    },
+    async getWindows() {
+      const windows = await desktopCapturer.getSources({
+        types: ["window", "screen"],
+      });
+      this.windowSelectOptions = [];
+      windows.forEach((item) => {
+        this.windowSelectOptions.push({
+          label: item.name,
+          value: item.id,
+        });
+      });
     },
   },
   created() {},

@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow,screen } from 'electron'
 import '../renderer/store'
 
 /**
@@ -27,7 +27,9 @@ function createWindow() {
     },
     useContentSize: true,
     width: 1000,
-    height: 562.5,
+    height: 700,
+    minWidth: 1000,
+    minHeight: 561,
     // transparent: true,
     backgroundColor: '#00000000',
     frame: false,
@@ -43,6 +45,7 @@ function createWindow() {
   mainWindow.on('closed', () => {
     mainWindow = null
   })
+  // mainWindow.setAspectRatio(screen.getPrimaryDisplay().workAreaSize.width/screen.getPrimaryDisplay().workAreaSize.height)
 }
 
 app.on('ready', createWindow)

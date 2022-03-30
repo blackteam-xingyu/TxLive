@@ -27,14 +27,14 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="当前缩放比">
+      <!-- <el-form-item label="当前缩放比">
         <el-radio-group v-model="bili">
           <el-radio-button :label="100">100%</el-radio-button>
           <el-radio-button :label="125">125%</el-radio-button>
           <el-radio-button :label="150">150%</el-radio-button>
           <el-radio-button :label="175">175%</el-radio-button>
         </el-radio-group>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="分辨率宽" prop="dpiWidth">
         <el-select v-model="form.dpiWidth">
           <el-option
@@ -70,11 +70,22 @@
         </el-radio-group>
       </el-form-item>
       <el-form-item label="窗体宽度" prop="sizeW">
-        <el-input v-model="form.sizeW"></el-input>
-        <!-- <el-input v-model="form.sizeH"></el-input> -->
+        <el-slider
+          v-model="form.sizeW"
+          :step="1"
+          :max="form.dpiWidth"
+          show-input
+        >
+        </el-slider>
       </el-form-item>
       <el-form-item label="窗体高度" prop="sizeH">
-        <el-input v-model="form.sizeH"></el-input>
+        <el-slider
+          v-model="form.sizeH"
+          :step="1"
+          :max="form.dpiHeight"
+          show-input
+        >
+        </el-slider>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -85,6 +96,7 @@
 </template>
 <script>
 import { dpiWidth, dpiHeight } from "@/common/js/dpi";
+const fs = require("fs");
 const remote = require("@electron/remote");
 export default {
   name: "camera-dialog",
@@ -162,7 +174,17 @@ export default {
       this.DpiHeight = dpiH;
     },
   },
-  created() {},
+  created() {
+    fs.readFile(`C:/ProgramData/TxLive/PCoptions.conf`, "utf8", (err, data) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+        console.log(data);
+        const param = JSON.parse(data);
+        this.bili = param.bili;
+      });
+  },
   mounted() {
     this.getCameraId();
     this.getSelection();

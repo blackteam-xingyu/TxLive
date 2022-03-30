@@ -1,5 +1,5 @@
 <template>
-  <div class="content">
+  <div v-resize class="content">
     <camera
       v-for="(item, index) in screenItem"
       v-if="item.type === 0"
@@ -7,6 +7,7 @@
       v-drag="!item.isLock"
       :options="item.options"
       :zIndex="screenItem.length - index"
+      :key="index"
     ></camera>
     <windows
       v-for="(item, index) in screenItem"
@@ -14,7 +15,8 @@
       v-show="item.isShow"
       v-drag="!item.isLock"
       :options="item.options"
-      :zIndex="screenItem.l"
+      :zIndex="screenItem.length - index"
+      :key="index"
     ></windows>
     <screen
       v-for="(item, index) in screenItem"
@@ -22,7 +24,8 @@
       v-show="item.isShow"
       v-drag="false"
       :options="item.options"
-      :zIndex="screenItem.l"
+      :zIndex="screenItem.length - index"
+      :key="index"
     ></screen>
     <process
       v-for="(item, index) in screenItem"
@@ -30,7 +33,8 @@
       v-show="item.isShow"
       v-drag="false"
       :options="item.options"
-      :zIndex="screenItem.l"
+      :zIndex="screenItem.length - index"
+      :key="index"
     ></process>
   </div>
 </template>
@@ -66,11 +70,12 @@ export default {
 <style lang="scss" scoped>
 .content {
   position: relative;
-  background: #333;
-  width: 100%;
-  // height: 100%;
+  background: #000;
+  max-width: 100%;
+  // flex: 1 1 auto;
+  max-height: 100%;
   aspect-ratio: 16 / 9;
-  border-radius: 3px;
+  // border-radius: 3px;
   overflow: hidden;
   &-main {
     height: 100%;

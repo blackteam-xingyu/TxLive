@@ -38,18 +38,26 @@ export default {
   computed: {
     cssVars() {
       return {
-        "--sizeW": (this.options.sizeW / this.options.dpiWidth) * 100 + "%",
-        "--sizeH": (this.options.sizeH / this.options.dpiHeight) * 100 + "%",
+        "--sizeW": (this.options.sizeW / 1920) * 100 + "%",
+        "--sizeH": (this.options.sizeH / 1080) * 100 + "%",
         "--zIndex": this.zIndex,
         "--rotate": `rotate(${this.options.angle}deg) rotateY(${
-          this.options.isCameraY? 180 : 0
-        }deg) rotateX(${this.options.isCameraX? 180 : 0}deg)`,
+          this.options.isCameraY ? 180 : 0
+        }deg) rotateX(${this.options.isCameraX ? 180 : 0}deg)`,
       };
     },
   },
   watch: {
     cssVars(newVal) {
       console.log("cssVars", newVal);
+    },
+    options: {
+      handler(newVal) {
+        console.log("options changed", newVal);
+        this.UsingMedia();
+      },
+      immediate: true,
+      deep: true,
     },
   },
 };

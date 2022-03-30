@@ -72,6 +72,26 @@ Vue.directive('drag', {
 
 
 })
+Vue.directive('resize', {
+  bind: function (el) {
+
+  },
+  inserted: function (el) {
+    console.log("v-resize\n", el)
+    const parent = el.parentNode
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        if (entry.target.offsetWidth >= (entry.target.offsetHeight * 16) / 9) {
+          el.style.width = (entry.target.offsetHeight * 16) / 9 + "px";
+          el.style.height = "100%"
+        }
+        else { el.style.width = "100%"; el.style.height = (entry.target.offsetWidth * 9) / 16 + "px" }
+      }
+
+    });
+    resizeObserver.observe(parent);
+  }
+})
 /* eslint-disable no-new */
 new Vue({
   components: { App },

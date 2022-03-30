@@ -10,7 +10,7 @@
     </transition>
     <transition name="el-fade-in-linear">
       <div v-show="show.show2" class="home-discribe">
-        点击开始，开启一段新的直播之旅
+        马上开始，开启一段新的直播之旅
       </div>
     </transition>
     <div class="home-btn">
@@ -104,6 +104,7 @@ export default {
     font-size: 18px;
     color: #333;
     font-weight: 600;
+    margin-bottom: 40px;
   }
   &-btn {
     flex: 1 1 auto;

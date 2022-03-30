@@ -15,7 +15,7 @@
         <i class="el-icon-delete" @click="clearTab"></i>
       </el-tooltip>
     </div>
-    <div class="content-body">
+    <div class="content-body" :key="contentBodyKey">
       <el-tabs v-model="screenTab" type="card" closable @tab-remove="removeTab">
         <el-tab-pane
           v-for="(item, index) in screenList"
@@ -26,6 +26,7 @@
         >
           <div
             class="content-body-item"
+            v-if="jtem"
             v-for="(jtem, jndex) in screenItem[index]"
             :key="jndex"
             :tabindex="jndex"
@@ -44,16 +45,28 @@
               ></i>
               <i
                 v-if="jtem.isLock"
+                v-show="!jtem.forbiddenLock"
                 class="el-icon-lock"
                 @click="trunLock(index, jndex)"
               ></i>
               <i
                 v-else
+                v-show="!jtem.forbiddenLock"
                 class="el-icon-unlock"
                 @click="trunLock(index, jndex)"
               ></i>
               <i class="el-icon-edit" @click="edit(jtem, jndex)"></i>
               <i class="el-icon-delete" @click="removeItem(index, jndex)"></i>
+              <i
+                class="el-icon-arrow-up"
+                v-show="jndex > 0"
+                @click="moveUp(screenItem[index], jndex)"
+              ></i>
+              <i
+                class="el-icon-arrow-down"
+                v-show="jndex < screenItem[index].length - 1"
+                @click="moveDown(screenItem[index], jndex)"
+              ></i>
               <i></i>
             </div>
           </div>
@@ -76,6 +89,13 @@
     </div>
 
     <!-- 浮窗 -->
+    <!-- 
+      DialogVisible 浮窗开关
+      title 浮窗标题
+      title 文字描述
+      yes 确认事件
+      cancel 取消事件
+     -->
     <my-dialog
       ref="dialog"
       :DialogVisible="dialogVisible"
@@ -122,6 +142,18 @@
       </div> -->
       <!-- <span>请选择需要添加的场景</span> -->
     </el-drawer>
+    <!-- 表单浮窗
+      items 组件对象数组
+      title 标题
+      dialogVisible 是否显示
+      defauls 默认值
+      yes 确认事件
+      cancel 取消事件
+      formFunction 真正触发的方法
+      itemModelCache 缓存模型
+      itemIndexCache 缓存索引
+      clearItemCache() 清空缓存
+     -->
     <form-dialog
       :items="formItems"
       :title="formTitle"
@@ -140,7 +172,12 @@
 </template>
 <script>
 import myDialog from "@/common/components/myDialog.vue";
-import { screenMenu, screenName, openScreen } from "@/common/js/liveItem.js";
+import {
+  screenMenu,
+  screenName,
+  openScreen,
+  windowsEdit,
+} from "@/common/js/liveItem.js";
 import FormDialog from "../../../common/components/formDialog.vue";
 import CameraDialog from "./ItemDialogs/cameraDialog.vue";
 const remote = require("@electron/remote");
@@ -174,6 +211,7 @@ export default {
       itemModelCache: {},
       itemIndexCache: null,
       isNew: false,
+      contentBodyKey: 0,
     };
   },
   props: [],
@@ -297,6 +335,9 @@ export default {
         case 0:
           this.cameraDialog(item);
           break;
+        case 1:
+          this.windowsDialog(item);
+          break;
         default:
           this.screenItem[Number(this.screenTab)].push(item);
           this.drawer = false;
@@ -305,14 +346,35 @@ export default {
     },
     edit(item, index) {
       this.itemModelCache = { ...item };
+      this.itemIndexCache = index;
       switch (item.type) {
         case 0:
           this.cameraDialog(item);
           break;
-
+        case 1:
+          this.windowsDialog(item);
+          break;
         default:
           break;
       }
+    },
+    moveUp(item, jndex) {
+      console.log("上移", item, jndex);
+      let a = item[jndex - 1];
+      item[jndex - 1] = item[jndex];
+      item[jndex] = a;
+      this.contentBodyKey++;
+      item.push(null);
+      item.splice(item.length - 1, 1);
+    },
+    moveDown(item, jndex) {
+      console.log("下移", item, jndex);
+      let a = item[jndex + 1];
+      item[jndex + 1] = item[jndex];
+      item[jndex] = a;
+      this.contentBodyKey++;
+      item.push(null);
+      item.splice(item.length - 1, 1);
     },
     //模块dialog配置
     //摄像头
@@ -321,13 +383,22 @@ export default {
       this.cameraDialogVisible = true;
     },
     cameraYes(val) {
-      this.itemModelCache.options = val;
+      console.log("this.itemModelCache\n", this.itemModelCache);
+      this.$set(this.itemModelCache, "options", val);
+      console.log("val\n", val);
       if (this.isNew) {
+        console.log("新增摄像头");
         this.screenItem[Number(this.screenTab)].push(this.itemModelCache);
       } else {
-        this.screenItem[Number(this.screenTab)][this.itemIndexCache] = {
-          ...this.itemModelCache,
-        };
+        console.log("修改摄像头\n", this.screenItem[Number(this.screenTab)]);
+        this.$set(
+          this.screenItem[Number(this.screenTab)],
+          this.itemIndexCache,
+          this.itemModelCache
+        );
+        // this.screenItem[Number(this.screenTab)][this.itemIndexCache] = {
+        //   ...this.itemModelCache,
+        // };
       }
 
       this.clearItemCache();
@@ -338,7 +409,31 @@ export default {
       this.cameraDialogVisible = false;
     },
     //窗口
-
+    async windowsDialog(item) {
+      console.log("123");
+      this.formDefaults = item.options;
+      this.formItems = await windowsEdit;
+      this.formTitle = "窗口捕捉";
+      this.formFunction = "windowsYes";
+      this.formDialogVisible = true;
+    },
+    windowsYes(val) {
+      console.log("this.itemModelCache\n", this.itemModelCache);
+      this.$set(this.itemModelCache, "options", val);
+      console.log("val\n", val);
+      if (this.isNew) {
+        console.log("新增窗口");
+        this.screenItem[Number(this.screenTab)].push(this.itemModelCache);
+      } else {
+        console.log("修改窗口\n", this.screenItem[Number(this.screenTab)]);
+        this.$set(
+          this.screenItem[Number(this.screenTab)],
+          this.itemIndexCache,
+          this.itemModelCache
+        );
+      }
+      this.clearItemCache();
+    },
     clearItemCache() {
       this.isNew = false;
       this.itemModelCache = {};
@@ -359,6 +454,7 @@ export default {
       let a = JSON.stringify(val);
       eval(`this.${this.formFunction}(${a})`);
       this.formDialogVisible = false;
+      this.refresh();
     },
     formCancel() {
       this.formDialogVisible = false;
@@ -413,24 +509,38 @@ export default {
         }
       );
     },
-  },
-  created() {
-    if (fs.existsSync(`C:/ProgramData/TxLive/`)) {
-      console.log("该路径已存在");
-    } else {
-      console.log("该路径不存在");
-      fs.mkdirSync(`C:/ProgramData/TxLive/`);
-    }
-    fs.readFile(`C:/ProgramData/TxLive/screen.conf`, "utf8", (err, data) => {
-      if (err) {
-        console.error(err);
+    //初始化
+    initialization() {
+      if (fs.existsSync(`C:/ProgramData/TxLive/`)) {
+        console.log("该路径已存在");
+      } else {
+        console.log("该路径不存在");
+        fs.mkdirSync(`C:/ProgramData/TxLive/`);
         return;
       }
-      console.log(data);
-      const param = JSON.parse(data);
-      this.screenList = param.screenList;
-      this.screenItem = param.screenItem;
-    });
+      fs.readFile(`C:/ProgramData/TxLive/screen.conf`, "utf8", (err, data) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+        console.log(data);
+        const param = JSON.parse(data);
+        this.screenList = param.screenList;
+        this.screenItem = param.screenItem;
+      });
+    },
+    //刷新
+    refresh() {
+      console.log("刷新");
+      this.screenItem[Number(this.screenTab)].push(null);
+      this.screenItem[Number(this.screenTab)].splice(
+        this.screenItem[Number(this.screenTab)].length - 1,
+        1
+      );
+    },
+  },
+  created() {
+    this.initialization();
   },
   mounted() {
     const loading = this.$loading({
@@ -502,6 +612,7 @@ export default {
   }
   &-body {
     height: calc(100% - 70px);
+    // display: flex;
     /deep/.el-tabs__item {
       font-size: 10px !important;
       padding: 0 15px !important;

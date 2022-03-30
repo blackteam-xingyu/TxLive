@@ -83,7 +83,7 @@ body {
         }
 
         .closebtn {
-            &:hover {
+            &:focus,&:hover {
                 background-color: #fef0f0;
                 color           : #f56c6c;
             }
@@ -91,7 +91,7 @@ body {
         }
 
         .settingbtn {
-            &:hover {
+            &:focus,&:hover {
                 background-color: #f4f4f5;
                 color           : #909399;
             }
@@ -143,6 +143,7 @@ body {
     font-size  : 12px;
     line-height: 12px;
 }
+
 
 //动画样式
 .music-title {
