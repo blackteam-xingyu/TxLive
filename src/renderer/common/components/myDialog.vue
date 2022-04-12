@@ -2,13 +2,14 @@
   <el-dialog
     :title="title"
     :visible.sync="DialogVisible"
+    @close="cancel"
     center
     width="30%"
     :modal-append-to-body="false"
     close-on-press-escape
   >
     <span>{{ content }}</span>
-    
+
     <span slot="footer" class="dialog-footer">
       <el-button @click="cancel" size="mini">取 消</el-button>
       <el-button type="danger" @click="yes" size="mini">确 定</el-button>
@@ -41,9 +42,10 @@ export default {
   methods: {
     yes() {
       this.$emit("yes", this.form);
+      this.$emit("update:DialogVisible", false);
     },
     cancel() {
-      this.$emit("cancel", this.form);
+      this.$emit("update:DialogVisible", false);
     },
   },
   mounted() {},

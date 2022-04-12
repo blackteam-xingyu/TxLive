@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     :title="title"
-    :visible.sync="dialog"
+    :visible.sync="dialogVisible"
     center
     @open="open"
     @close="cancel"
@@ -13,7 +13,7 @@
     <el-form
       ref="dialogForm"
       label-position="right"
-      label-width="85px"
+      label-width="30%"
       status-icon
       size="small"
       :model="form"
@@ -30,16 +30,18 @@
             v-for="(jtem, jndex) in item.options"
             :label="jtem.label"
             :value="jtem.value"
+            :key="jndex"
           ></el-option>
         </el-select>
         <el-select
-          v-if="item.formtype == 'selectWindow'"
+          v-else-if="item.formtype == 'selectWindow'"
           v-model="form[item.field]"
         >
           <el-option
             v-for="(jtem, jndex) in windowSelectOptions"
             :label="jtem.label"
             :value="jtem.value"
+            :key="jndex"
           ></el-option>
         </el-select>
         <el-date-picker
@@ -74,7 +76,7 @@
         >
           <el-radio
             v-for="(jtem, jndex) in item.radioGroupOptions"
-            label="jtem.label"
+            :label="jtem.label"
             :key="jndex"
           ></el-radio>
         </el-radio-group>
@@ -103,6 +105,17 @@
           :step="item.sliderOptions.step ? item.sliderOptions.step : 0.01"
         >
         </el-slider>
+        <el-input
+          v-else-if="item.formtype == 'colorPicker'"
+          v-model="form[item.field]"
+        >
+          <el-color-picker
+            slot="append"
+            v-model="form[item.field]"
+            show-alpha
+            size="mini"
+          ></el-color-picker
+        ></el-input>
         <el-input v-else v-model="form[item.field]"></el-input>
         <input
           v-if="item.formtype == 'file'"
@@ -128,7 +141,7 @@ export default {
     return {
       form: {},
       fileField: "",
-      dialog: false,
+      // dialog: false,
       windowSelectOptions: [],
     };
   },
@@ -146,15 +159,16 @@ export default {
       this.$refs.dialogForm.validate((valid) => {
         if (valid) {
           this.$emit("yes", this.form);
+          this.$emit("update:dialogVisible", false);
         } else {
           console.log("error submit!!");
+          this.$message.error("校验失败，请检查填写错误！");
           return false;
         }
       });
     },
     cancel() {
-      // this.$refs.dialogForm.resetFields();
-      this.$emit("cancel");
+      this.$emit("update:dialogVisible", false);
     },
     open() {
       this.getWindows();
@@ -198,11 +212,35 @@ export default {
   },
   created() {},
   mounted() {},
-  watch: {
-    dialogVisible(newVal) {
-      this.dialog = newVal;
-    },
-  },
+  watch: {},
 };
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.el-input-group--append,
+.el-input-group--prepend {
+  display: inline-flex;
+  /deep/.el-input__inner {
+      width: calc(100% - 65.6px);
+  }
+}
+/deep/.el-input-group__append,
+.el-input-group__prepend {
+  padding: 0;
+  height: 32px;
+  display: inline-block;
+}
+/deep/.el-color-picker--mini {
+  height: 32px;
+  width: 65.6px;
+
+  .el-color-picker__trigger {
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    border: none;
+  }
+  .el-color-picker__panel {
+    padding: 0;
+  }
+}
+</style>

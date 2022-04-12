@@ -28,7 +28,7 @@
           ></el-button>
         </el-tooltip>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item>主题</el-dropdown-item>
+          <el-dropdown-item>首选项</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
       <el-tooltip

@@ -8,6 +8,12 @@
 </template>
 <script>
 const { desktopCapturer } = require("electron");
+const fs = require("fs");
+const configs = fs.readFileSync(
+  "C:/ProgramData/TxLive/PCoptions.conf",
+  "utf-8"
+);
+const config = JSON.parse(configs);
 export default {
   name: "windows",
   data() {
@@ -47,8 +53,8 @@ export default {
   computed: {
     cssVars() {
       return {
-        "--sizeW": this.options.sizeW + "%",
-        "--sizeH": this.options.sizeH + "%",
+        "--sizeW": (this.options.sizeW / config.dpiWidth) * 100 + "%",
+        "--sizeH": (this.options.sizeH / config.dpiHeight) * 100 + "%",
         "--zIndex": this.zIndex,
       };
     },

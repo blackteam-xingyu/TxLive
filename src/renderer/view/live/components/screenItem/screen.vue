@@ -1,5 +1,5 @@
 <template>
-  <video ref="myWindow" class="content-main" autoplay ></video>
+  <video ref="myScreen" class="content-main" autoplay :style="cssVars"></video>
 </template>
 <script>
 const { desktopCapturer } = require("electron");
@@ -11,6 +11,9 @@ export default {
   props: {
     options: {
       type: Object,
+    },
+    zIndex: {
+      type: Number,
     },
   },
   methods: {
@@ -37,18 +40,37 @@ export default {
         },
       });
       console.log(stream ? true : false);
-      this.$refs.myWindow.srcObject = stream;
+      this.$refs.myScreen.srcObject = stream;
     },
   },
   mounted() {
     this.UsingMedia();
   },
-  
+  computed: {
+    cssVars() {
+      return {
+        "--zIndex": this.zIndex,
+      };
+    },
+  },
+  watch: {
+    cssVars(newVal) {
+      console.log("cssVars", newVal);
+    },
+    options: {
+      handler(newVal) {
+        console.log("options changed", newVal);
+        this.UsingMedia();
+      },
+      immediate: true,
+      deep: true,
+    },
+  },
 };
 </script>
 <style lang="scss" scoped>
 .content-main {
   position: absolute;
-  z-index: 1;
+  z-index: var(--zIndex);
 }
 </style>

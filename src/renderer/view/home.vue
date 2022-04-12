@@ -26,6 +26,7 @@
         v-show="show.show4"
         type="primary"
         icon="el-icon-circle-plus"
+        @click="newLive"
         plain
         round
         >打开直播间</el-button

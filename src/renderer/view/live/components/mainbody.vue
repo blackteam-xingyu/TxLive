@@ -18,15 +18,6 @@
       :zIndex="screenItem.length - index"
       :key="index"
     ></windows>
-    <screen
-      v-for="(item, index) in screenItem"
-      v-if="item.type === 3"
-      v-show="item.isShow"
-      v-drag="false"
-      :options="item.options"
-      :zIndex="screenItem.length - index"
-      :key="index"
-    ></screen>
     <process
       v-for="(item, index) in screenItem"
       v-if="item.type === 2"
@@ -36,6 +27,34 @@
       :zIndex="screenItem.length - index"
       :key="index"
     ></process>
+    <screen
+      v-for="(item, index) in screenItem"
+      v-if="item.type === 3"
+      v-show="item.isShow"
+      v-drag="false"
+      :options="item.options"
+      :zIndex="screenItem.length - index"
+      :key="index"
+    ></screen>
+    <photo
+      v-for="(item, index) in screenItem"
+      v-if="item.type === 4"
+      v-show="item.isShow"
+      v-drag="!item.isLock"
+      :options="item.options"
+      :zIndex="screenItem.length - index"
+      :key="index"
+    ></photo>
+    <mytext
+      v-for="(item, index) in screenItem"
+      v-if="item.type === 5"
+      v-show="item.isShow"
+      v-drag="!item.isLock"
+      :options="item.options"
+      :zIndex="screenItem.length - index"
+      :key="index"
+    >
+    </mytext>
   </div>
 </template>
 <script>
@@ -44,8 +63,10 @@ import Screen from "./screenItem/screen.vue";
 import camera from "./screenItem/camera.vue";
 import Windows from "./screenItem/windows.vue";
 import Process from "./screenItem/process.vue";
+import Photo from "./screenItem/photo.vue";
+import Mytext from "./screenItem/mytext.vue";
 export default {
-  components: { camera, Windows, Screen, Process },
+  components: { camera, Windows, Screen, Process, Photo, Mytext },
   name: "mainbody",
   data() {
     return {

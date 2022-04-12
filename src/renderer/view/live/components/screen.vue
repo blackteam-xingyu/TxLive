@@ -55,7 +55,11 @@
                 class="el-icon-unlock"
                 @click="trunLock(index, jndex)"
               ></i>
-              <i class="el-icon-edit" @click="edit(jtem, jndex)"></i>
+              <i
+                class="el-icon-edit"
+                v-if="jtem.type != 3"
+                @click="edit(jtem, jndex)"
+              ></i>
               <i class="el-icon-delete" @click="removeItem(index, jndex)"></i>
               <i
                 class="el-icon-arrow-up"
@@ -98,11 +102,10 @@
      -->
     <my-dialog
       ref="dialog"
-      :DialogVisible="dialogVisible"
+      :DialogVisible.sync="dialogVisible"
       :title="title"
       :content="content"
       @yes="yes(yesEval)"
-      @cancel="cancel(cancelEval)"
     ></my-dialog>
     <!-- 抽屉 -->
     <el-drawer
@@ -142,7 +145,7 @@
       </div> -->
       <!-- <span>请选择需要添加的场景</span> -->
     </el-drawer>
-    <!-- 表单浮窗
+    <!-- *表单浮窗
       items 组件对象数组
       title 标题
       dialogVisible 是否显示
@@ -157,17 +160,26 @@
     <form-dialog
       :items="formItems"
       :title="formTitle"
-      :dialogVisible="formDialogVisible"
+      :dialogVisible.sync="formDialogVisible"
       :defaults="formDefaults"
       @yes="fromYes"
-      @cancel="formCancel"
     ></form-dialog>
     <camera-dialog
       :defaults="cameraDefaults"
-      :dialogVisible="cameraDialogVisible"
+      :dialogVisible.sync="cameraDialogVisible"
       @yes="cameraYes"
-      @cancel="cameraCancel"
     ></camera-dialog>
+    <photo-dialog
+      :defaults="photoDefaults"
+      :dialogVisible.sync="photoDialogVisible"
+      @yes="photoYes"
+    ></photo-dialog>
+    <text-dialog
+      :defaults="textDefaults"
+      :dialogVisible.sync="textDialogVisible"
+      @yes="textYes"
+    >
+    </text-dialog>
   </div>
 </template>
 <script>
@@ -177,13 +189,16 @@ import {
   screenName,
   openScreen,
   windowsEdit,
+  processEdit,
 } from "@/common/js/liveItem.js";
 import FormDialog from "../../../common/components/formDialog.vue";
 import CameraDialog from "./ItemDialogs/cameraDialog.vue";
+import PhotoDialog from "./ItemDialogs/photoDialog.vue";
+import TextDialog from "./ItemDialogs/textDialog.vue";
 const remote = require("@electron/remote");
 const fs = require("fs");
 export default {
-  components: { myDialog, FormDialog, CameraDialog },
+  components: { myDialog, FormDialog, CameraDialog, PhotoDialog, TextDialog },
   name: "screen",
   data() {
     return {
@@ -196,9 +211,15 @@ export default {
       yesEval: "",
       cancelEval: "",
       screenItem: [],
+      contentBodyKey: 0,
+      //*抽屉
       drawerTitle: "",
       drawer: false,
       drawerSize: 270,
+      //*公共表单变量
+      itemModelCache: {}, //缓存模型
+      itemIndexCache: null, //缓存索引
+      isNew: false, //是否新建
       //*formDialog表单变量
       formItems: [],
       formTitle: "",
@@ -208,10 +229,11 @@ export default {
       //*cameraDialog相机变量
       cameraDialogVisible: false,
       cameraDefaults: {},
-      itemModelCache: {},
-      itemIndexCache: null,
-      isNew: false,
-      contentBodyKey: 0,
+      //*photoDialog图片变量
+      photoDefaults: {},
+      photoDialogVisible: false,
+      textDefaults: {},
+      textDialogVisible: false,
     };
   },
   props: [],
@@ -329,6 +351,7 @@ export default {
       }
     },
     chooseScreenItem(item) {
+      this.clearItemCache();
       this.itemModelCache = item;
       this.isNew = true;
       switch (item.type) {
@@ -338,6 +361,15 @@ export default {
         case 1:
           this.windowsDialog(item);
           break;
+        case 2:
+          this.processDialog(item);
+          break;
+        case 4:
+          this.photoDialog(item);
+          break;
+        case 5:
+          this.textDialog(item);
+          break;
         default:
           this.screenItem[Number(this.screenTab)].push(item);
           this.drawer = false;
@@ -345,6 +377,7 @@ export default {
       }
     },
     edit(item, index) {
+      this.clearItemCache();
       this.itemModelCache = { ...item };
       this.itemIndexCache = index;
       switch (item.type) {
@@ -353,6 +386,15 @@ export default {
           break;
         case 1:
           this.windowsDialog(item);
+          break;
+        case 2:
+          this.processDialog(item);
+          break;
+        case 4:
+          this.photoDialog(item);
+          break;
+        case 5:
+          this.textDialog(item);
           break;
         default:
           break;
@@ -377,7 +419,7 @@ export default {
       item.splice(item.length - 1, 1);
     },
     //模块dialog配置
-    //摄像头
+    //!摄像头
     cameraDialog(item) {
       this.cameraDefaults = item.options;
       this.cameraDialogVisible = true;
@@ -400,23 +442,19 @@ export default {
         //   ...this.itemModelCache,
         // };
       }
-
       this.clearItemCache();
-      this.cameraDialogVisible = false;
+      this.drawer = false;
     },
-    cameraCancel() {
-      this.clearItemCache();
-      this.cameraDialogVisible = false;
-    },
-    //窗口
-    async windowsDialog(item) {
-      console.log("123");
+    //!窗口
+    windowsDialog(item) {
+      console.log("windowsDialog");
       this.formDefaults = item.options;
-      this.formItems = await windowsEdit;
+      this.formItems = windowsEdit;
       this.formTitle = "窗口捕捉";
       this.formFunction = "windowsYes";
       this.formDialogVisible = true;
     },
+
     windowsYes(val) {
       console.log("this.itemModelCache\n", this.itemModelCache);
       this.$set(this.itemModelCache, "options", val);
@@ -433,11 +471,67 @@ export default {
         );
       }
       this.clearItemCache();
+      this.drawer = false;
+    },
+    //!进程
+    processDialog(item) {
+      console.log("windowsDialog");
+      this.formDefaults = item.options;
+      this.formItems = processEdit;
+      this.formTitle = "游戏进程";
+      this.formFunction = "windowsYes";
+      this.formDialogVisible = true;
     },
     clearItemCache() {
       this.isNew = false;
       this.itemModelCache = {};
       this.itemIndexCache = null;
+    },
+    //!图片
+    photoDialog(item) {
+      this.photoDefaults = item.options;
+      this.photoDialogVisible = true;
+    },
+
+    photoYes(val) {
+      console.log("this.itemModelCache\n", this.itemModelCache);
+      this.$set(this.itemModelCache, "options", val);
+      console.log("val\n", val);
+      if (this.isNew) {
+        console.log("新增图片");
+        this.screenItem[Number(this.screenTab)].push(this.itemModelCache);
+      } else {
+        console.log("修改图片\n", this.screenItem[Number(this.screenTab)]);
+        this.$set(
+          this.screenItem[Number(this.screenTab)],
+          this.itemIndexCache,
+          this.itemModelCache
+        );
+      }
+      this.clearItemCache();
+      this.drawer = false;
+    },
+    //!文字
+    textDialog(item) {
+      this.textDefaults = item.options;
+      this.textDialogVisible = true;
+    },
+    textYes(val) {
+      console.log("this.itemModelCache\n", this.itemModelCache);
+      this.$set(this.itemModelCache, "options", val);
+      console.log("val\n", val);
+      if (this.isNew) {
+        console.log("新增文字");
+        this.screenItem[Number(this.screenTab)].push(this.itemModelCache);
+      } else {
+        console.log("修改文字\n", this.screenItem[Number(this.screenTab)]);
+        this.$set(
+          this.screenItem[Number(this.screenTab)],
+          this.itemIndexCache,
+          this.itemModelCache
+        );
+      }
+      this.clearItemCache();
       this.drawer = false;
     },
     //#endregion
@@ -453,12 +547,9 @@ export default {
     fromYes(val) {
       let a = JSON.stringify(val);
       eval(`this.${this.formFunction}(${a})`);
-      this.formDialogVisible = false;
       this.refresh();
     },
-    formCancel() {
-      this.formDialogVisible = false;
-    },
+
     yes(val) {
       if (val && val != "") {
         eval(val);
@@ -466,17 +557,6 @@ export default {
       this.title = "";
       this.content = "";
       this.yesEval = "";
-      this.dialogVisible = false;
-    },
-
-    cancel(val) {
-      if (val && val != "") {
-        eval(val);
-      }
-      this.title = "";
-      this.content = "";
-      this.cancelEval = "";
-      this.dialogVisible = false;
     },
     handleClose() {
       this.drawer = false;

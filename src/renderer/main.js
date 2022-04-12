@@ -5,7 +5,9 @@ import router from './router'
 import store from './store'
 import ElementUI from 'element-ui';
 import './assets/iconfont/iconfont.css'
-
+const fs = require("fs");
+const configs = fs.readFileSync("C:/ProgramData/TxLive/PCoptions.conf", "utf-8");
+const config = JSON.parse(configs);
 Vue.use(ElementUI);
 
 import 'element-ui/lib/theme-chalk/index.css';
@@ -92,6 +94,23 @@ Vue.directive('resize', {
     resizeObserver.observe(parent);
   }
 })
+Vue.directive('refont', {
+  bind: function (el) {
+
+  },
+  inserted: function (el, binding) {
+    console.log("v-refont\n", el)
+    const parent = el.parentNode
+    el.style.fontSize = Number(binding.value) / config.dpiWidth * parent.offsetWidth + "px";
+    console.log("fontSize\n", Number(binding.value) / config.dpiWidth * parent.offsetWidth)
+  },
+  update: function (el, binding) {
+    const parent = el.parentNode
+    el.style.fontSize = Number(binding.value) / config.dpiWidth * parent.offsetWidth + "px";
+    console.log("fontSizeUpdate\n", Number(binding.value) / config.dpiWidth * parent.offsetWidth)
+  }
+})
+
 /* eslint-disable no-new */
 new Vue({
   components: { App },

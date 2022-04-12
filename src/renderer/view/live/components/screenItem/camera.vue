@@ -51,9 +51,9 @@ export default {
     cssVars(newVal) {
       console.log("cssVars", newVal);
     },
-    options: {
+    "options.cameraID": {
       handler(newVal) {
-        console.log("options changed", newVal);
+        console.log("options.cameraID changed", newVal);
         this.UsingMedia();
       },
       immediate: true,

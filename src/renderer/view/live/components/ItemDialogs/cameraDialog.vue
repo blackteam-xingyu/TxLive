@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     title="摄像头设置"
-    :visible.sync="dialog"
+    :visible.sync="dialogVisible"
     center
     @close="cancel"
     width="460px"
@@ -27,14 +27,7 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <!-- <el-form-item label="当前缩放比">
-        <el-radio-group v-model="bili">
-          <el-radio-button :label="100">100%</el-radio-button>
-          <el-radio-button :label="125">125%</el-radio-button>
-          <el-radio-button :label="150">150%</el-radio-button>
-          <el-radio-button :label="175">175%</el-radio-button>
-        </el-radio-group>
-      </el-form-item> -->
+
       <el-form-item label="分辨率宽" prop="dpiWidth">
         <el-select v-model="form.dpiWidth">
           <el-option
@@ -97,7 +90,11 @@
 <script>
 import { dpiWidth, dpiHeight } from "@/common/js/dpi";
 const fs = require("fs");
-const remote = require("@electron/remote");
+const configs = fs.readFileSync(
+  "C:/ProgramData/TxLive/PCoptions.conf",
+  "utf-8"
+);
+const config = JSON.parse(configs);
 export default {
   name: "camera-dialog",
   data() {
@@ -113,10 +110,8 @@ export default {
         sizeH: 0,
       },
       cameras: [],
-      dialog: false,
       DpiWidth: [],
       DpiHeight: [],
-      bili: 100,
       rule: {
         cameraID: [{ required: true, message: "请选择相机", trigger: "blur" }],
         dpiWidth: [
@@ -136,10 +131,10 @@ export default {
     yes() {
       console.log("yes", this.form);
       this.$emit("yes", this.form);
+      this.$emit("update:dialogVisible", false);
     },
     cancel() {
-      this.dialog = false;
-      this.$emit("cancel");
+      this.$emit("update:dialogVisible", false);
     },
     async getCameraId() {
       let mydeviecs = await navigator.mediaDevices.enumerateDevices();
@@ -161,38 +156,25 @@ export default {
     },
     getSelection() {
       // console.log("getSelection", remote.screen.getPrimaryDisplay());
-      let maxW = remote.screen.getPrimaryDisplay().workAreaSize.width;
-      let maxH = remote.screen.getPrimaryDisplay().workAreaSize.height;
+      let maxW = config.dpiWidth;
+      let maxH = config.dpiHeight;
       console.log("maxW\n", maxW, "\nmaxH\n", maxH);
       let dpiW = dpiWidth.filter((item) => {
-        return item.value <= (maxW * this.bili) / 100;
+        return item.value <= maxW;
       });
       let dpiH = dpiHeight.filter((item) => {
-        return item.value <= (maxH * this.bili) / 100 + 50;
+        return item.value <= maxH;
       });
       this.DpiWidth = dpiW;
       this.DpiHeight = dpiH;
     },
   },
-  created() {
-    fs.readFile(`C:/ProgramData/TxLive/PCoptions.conf`, "utf8", (err, data) => {
-        if (err) {
-          console.error(err);
-          return;
-        }
-        console.log(data);
-        const param = JSON.parse(data);
-        this.bili = param.bili;
-      });
-  },
+  created() {},
   mounted() {
     this.getCameraId();
     this.getSelection();
   },
   watch: {
-    dialogVisible(newVal) {
-      this.dialog = newVal;
-    },
     defaults: {
       handler(newVal) {
         if (newVal) {
@@ -204,10 +186,6 @@ export default {
       },
       immediate: true,
       deep: true,
-    },
-    bili(newVal) {
-      console.log("bili", newVal);
-      this.getSelection();
     },
   },
 };

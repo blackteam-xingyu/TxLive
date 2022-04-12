@@ -1,8 +1,12 @@
 <template>
-  <video ref="myWindow" class="content-main" autoplay ></video>
+  <video
+    ref="myProcess"
+    class="content-process"
+    autoplay
+    :style="cssVars"
+  ></video>
 </template>
 <script>
-const { desktopCapturer } = require("electron");
 export default {
   name: "process",
   data() {
@@ -12,44 +16,54 @@ export default {
     options: {
       type: Object,
     },
+    zIndex: {
+      type: Number,
+    },
   },
   methods: {
     async UsingMedia() {
-      console.log(
-        "desktopCapturer\n",
-        await desktopCapturer.getSources({ types: ["window", "screen"] })
-      );
-
       let stream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          mandatory: {
-            chromeMediaSource: "desktop",
-            chromeMediaSourceId: this.options.gameID,
-          },
-        },
         video: {
           mandatory: {
             chromeMediaSource: "desktop",
             chromeMediaSourceId: this.options.gameID,
-            minWidth: 1920,
-            maxWidth: 1920,
-            minHeight: 1080,
-            maxHeight: 1080,
+            minWidth: this.options.dpiWidth,
+            maxWidth: this.options.dpiWidth,
+            minHeight: this.options.dpiHeight,
+            maxHeight: this.options.dpiHeight,
           },
         },
       });
       console.log(stream ? true : false);
-      this.$refs.myWindow.srcObject = stream;
+      this.$refs.myProcess.srcObject = stream;
     },
   },
   mounted() {
     this.UsingMedia();
   },
+  computed: {
+    cssVars() {
+      return {
+        "--zIndex": this.zIndex,
+      };
+    },
+  },
+  watch: {
+    "options.gameID": {
+      handler(newVal) {
+        this.UsingMedia();
+      },
+      immediate: true,
+      deep: true,
+    },
+  },
 };
 </script>
 <style lang="scss" scoped>
-.content-main {
-  position: relative;
-  z-index: 1;
+.content-process {
+  position: absolute;
+  z-index: var(--zIndex);
+  width: 100%;
+  height: 100%;
 }
 </style>

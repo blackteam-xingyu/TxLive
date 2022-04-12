@@ -1,3 +1,7 @@
+import { dpiWidth, dpiHeight } from "../../common/js/dpi";
+const fs = require("fs");
+const configs = fs.readFileSync("C:/ProgramData/TxLive/PCoptions.conf", "utf-8");
+const config = JSON.parse(configs);
 
 export const screenMenu = [
     {
@@ -25,8 +29,8 @@ export const screenMenu = [
         icon: "icon-window",
         options: {
             windowID: "",
-            sizeW: 100,
-            sizeH: 100,
+            sizeW: config.dpiWidth,
+            sizeH: config.dpiHeight,
         }
     },
     {
@@ -37,9 +41,10 @@ export const screenMenu = [
         forbiddenLock: true,
         icon: "icon-gamepad-controller",
         options: {
-            gameName: "",
             gameID: "",
-            fps: 60
+            dpiWidth: 1920,
+            dpiHeight: 1080,
+            // fps: 60
         }
     },
     {
@@ -57,7 +62,7 @@ export const screenMenu = [
         isLock: false,
         icon: "icon-photo",
         options: {
-            srcUrl: "",
+            srcUrl: ["#ccc"],
             photoTypeID: "2",
             sizeW: 240,
             sizeH: 135,
@@ -71,15 +76,11 @@ export const screenMenu = [
         icon: "icon-txt",
         options: {
             text: "文字内容",
-
-            textStyle: {
-                color: "#409EFF",
-                background: "transparent",
-                fontFamily: "Microsoft YaHei",
-                fontSize: `${14 / 1920 * 100}%`,
-                textShadow: "transparent",
-            },
-
+            color: "#409EFF",
+            background: "#00000000",
+            fontFamily: "Microsoft YaHei",
+            fontSize: 14,
+            textShadow: "0 0 1px rgba(0, 0, 0, 1)"
         }
     },
     {
@@ -213,7 +214,7 @@ export const windowsEdit = [
         rule: [],
         sliderOptions: {
             min: 0,
-            max: 100,
+            max: config.dpiWidth,
             showInput: true,
         }
     },
@@ -225,9 +226,48 @@ export const windowsEdit = [
         rule: [],
         sliderOptions: {
             min: 0,
-            max: 100,
+            max: config.dpiHeight,
             showInput: true,
         }
     }
 
+]
+export const processEdit = [
+
+    {
+        label: "窗口选择",
+        formtype: "selectWindow",
+        field: "gameID",
+        require: true,
+        rule: [],
+        options: []
+    },
+    {
+        label: "分辨率宽度",
+        formtype: "select",
+        field: "dpiWidth",
+        require: true,
+        rule: [],
+        options: (() => {
+            let maxW = config.dpiWidth;
+            let dpiW = dpiWidth.filter((item) => {
+                return item.value <= maxW;
+            });
+            return dpiW;
+        })(),
+    },
+    {
+        label: "分辨率高度",
+        formtype: "select",
+        field: "dpiHeight",
+        require: true,
+        rule: [],
+        options: (() => {
+            let maxH = config.dpiHeight;
+            let dpiH = dpiHeight.filter((item) => {
+                return item.value <= maxH;
+            });
+            return dpiH;
+        })(),
+    },
 ]

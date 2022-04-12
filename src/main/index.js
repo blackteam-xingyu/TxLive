@@ -1,4 +1,4 @@
-import { app, BrowserWindow,screen } from 'electron'
+import { app, BrowserWindow, screen } from 'electron'
 import '../renderer/store'
 
 /**
@@ -22,7 +22,7 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true,
-
+      webSecurity: false,
       contextIsolation: false
     },
     useContentSize: true,
