@@ -79,7 +79,8 @@ export const screenMenu = [
             color: "#409EFF",
             background: "#00000000",
             fontFamily: "Microsoft YaHei",
-            fontSize: 14,
+            fontSize: 100,
+            fontWeight: 400,
             textShadow: "0 0 1px rgba(0, 0, 0, 1)"
         }
     },

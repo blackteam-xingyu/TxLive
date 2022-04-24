@@ -1,6 +1,7 @@
 <template>
   <div v-resize class="content">
     <camera
+      :id="`item_${index}`"
       v-for="(item, index) in screenItem"
       v-if="item.type === 0"
       v-show="item.isShow"
@@ -10,6 +11,7 @@
       :key="index"
     ></camera>
     <windows
+      :id="`item_${index}`"
       v-for="(item, index) in screenItem"
       v-if="item.type === 1"
       v-show="item.isShow"
@@ -19,6 +21,7 @@
       :key="index"
     ></windows>
     <process
+      :id="`item_${index}`"
       v-for="(item, index) in screenItem"
       v-if="item.type === 2"
       v-show="item.isShow"
@@ -28,6 +31,7 @@
       :key="index"
     ></process>
     <screen
+      :id="`item_${index}`"
       v-for="(item, index) in screenItem"
       v-if="item.type === 3"
       v-show="item.isShow"
@@ -37,6 +41,7 @@
       :key="index"
     ></screen>
     <photo
+      :id="`item_${index}`"
       v-for="(item, index) in screenItem"
       v-if="item.type === 4"
       v-show="item.isShow"
@@ -46,6 +51,7 @@
       :key="index"
     ></photo>
     <mytext
+      :id="`item_${index}`"
       v-for="(item, index) in screenItem"
       v-if="item.type === 5"
       v-show="item.isShow"
@@ -59,7 +65,6 @@
 </template>
 <script>
 import Screen from "./screenItem/screen.vue";
-// var box = document.getElementsByClassName("box")[0]
 import camera from "./screenItem/camera.vue";
 import Windows from "./screenItem/windows.vue";
 import Process from "./screenItem/process.vue";
@@ -71,17 +76,41 @@ export default {
   data() {
     return {
       screenItem: [],
+      events: [],
+      canvasItem: [],
     };
   },
   props: ["screenItemBase"],
-  methods: {},
-  mounted() {},
+  mounted() {
+    setTimeout(() => {
+      this.refreshCanvas();
+    }, 3000);
+  },
+  methods: {
+    refreshCanvas() {
+      this.canvasItem = this.screenItemBase.map((item, index) => {
+        let el = document.getElementById(`item_${index}`);
+        return {
+          ...item,
+          ...{
+            left: el.offsetLeft,
+            top: el.offsetTop,
+            index: index,
+          },
+        };
+      }, this);
+    },
+  },
   watch: {
     screenItemBase: {
       handler(newVal, oldVal) {
         this.screenItem = newVal;
-        console.log(this.screenItem);
       },
+      immediate: true,
+      deep: true,
+    },
+    canvasItem: {
+      handler(newVal, oldVal) {},
       immediate: true,
       deep: true,
     },
@@ -102,5 +131,17 @@ export default {
     height: 100%;
     width: 100%;
   }
+}
+/deep/.el-drawer__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+#pushCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 9999;
 }
 </style>

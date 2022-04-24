@@ -4,12 +4,6 @@
   </div>
 </template>
 <script>
-const fs = require("fs");
-const configs = fs.readFileSync(
-  "C:/ProgramData/TxLive/PCoptions.conf",
-  "utf-8"
-);
-const config = JSON.parse(configs);
 export default {
   name: "my-text",
   data() {
@@ -33,6 +27,7 @@ export default {
         "--Background": this.options.background,
         "--fontFamily": this.options.fontFamily,
         "--textShadow": this.options.textShadow,
+        "--fontWeight": this.options.fontWeight,
         "--zIndex": this.zIndex,
       };
     },
@@ -56,6 +51,7 @@ export default {
   background-color: var(--Background);
   color: var(--Color);
   font-family: var(--fontFamily);
+  font-weight: var(--fontWeight);
   text-shadow: var(--textShadow);
   user-select: none;
   &:hover {

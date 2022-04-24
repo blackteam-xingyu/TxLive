@@ -53,15 +53,27 @@
       ></el-slider>
     </div>
     <div class="content-right">
-      <el-button type="info" plain round icon="el-icon-camera">截屏</el-button>
+      <el-tooltip effect="dark" content="更新推流" placement="top">
+        <el-button
+          type="info"
+          plain
+          round
+          icon="el-icon-refresh"
+          circle
+          @click="refreshCanvas"
+        ></el-button>
+      </el-tooltip>
+      <el-button type="success" plain round icon="el-icon-camera"
+        >截屏</el-button
+      >
       <el-button type="warning" plain round icon="el-icon-video-camera">
         录制
       </el-button>
       <el-button
         type="danger"
         round
-        icon="el-icon-video-play
-"
+        icon="el-icon-video-play"
+        @click="startPush"
       >
         开始直播
       </el-button>
@@ -89,6 +101,12 @@ export default {
     },
     turnMusic() {
       this.isMusic = !this.isMusic;
+    },
+    startPush() {
+      this.visible = true;
+    },
+    refreshCanvas() {
+      this.$emit("refreshCanvas");
     },
   },
   mounted() {},

@@ -21,7 +21,7 @@
         <mainbody ref="mainbody" :screenItemBase="screenItem"></mainbody>
       </div>
       <div class="live-main-foot">
-        <mainfoot></mainfoot>
+        <mainfoot @refreshCanvas="refreshCanvas"></mainfoot>
       </div>
     </div>
     <div class="live-message">
@@ -84,6 +84,9 @@ export default {
     screenItemChanged(val) {
       console.log("screenItemChanged触发");
       this.screenItem = val;
+    },
+    refreshCanvas() {
+      this.$refs.mainbody.refreshCanvas();
     },
   },
   mounted() {},

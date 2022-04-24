@@ -102,9 +102,10 @@
 </template>
 
 <script>
-const remote = require('@electron/remote')
+const remote = require("@electron/remote");
+// import { PlayerCanvas } from "./common/js/PlayerCanvas";
 export default {
-  name: "txlive",
+  name: "txLive",
   data() {
     return {
       isFullScreen: false,
@@ -112,6 +113,9 @@ export default {
       visible: false,
       isSetting: false,
     };
+  },
+  mounted() {
+    // this._playerCanvas = new PlayerCanvas(1920, 1080);
   },
   methods: {
     dialogVisibleShow() {

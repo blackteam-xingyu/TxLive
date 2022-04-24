@@ -53,7 +53,18 @@
         </el-select>
       </el-form-item>
       <el-form-item label="文字大小" prop="fontSize">
-        <el-input v-model="form.fontSize" ></el-input>
+        <el-input v-model="form.fontSize"></el-input>
+      </el-form-item>
+      <el-form-item label="文字字重" prop="fontWeight">
+        <el-slider
+          v-model="form.fontWeight"
+          :step="100"
+          :min="100"
+          :max="1000"
+          show-stops
+          :marks="marks"
+        >
+        </el-slider>
       </el-form-item>
       <el-form-item label="文字阴影" prop="textShadow">
         <el-input v-model="form.textShadow" disabled>
@@ -84,7 +95,14 @@ export default {
         background: "",
         fontFamily: "",
         fontSize: 0,
+        fontWeight: 0,
         textShadow: "",
+      },
+      marks: {
+        300: "纤细",
+        400: "默认",
+        700: "加粗",
+        900: "最粗",
       },
       rule: {
         text: [{ required: true, message: "请输入文字内容", trigger: "blur" }],
@@ -100,6 +118,9 @@ export default {
             message: "请输入10-999之间的数字",
             trigger: "blur",
           },
+        ],
+        fontWeight: [
+          { required: true, message: "请输入文字大小", trigger: "blur" },
         ],
         textShadow: [
           {
@@ -172,7 +193,7 @@ export default {
       deep: true,
     },
     textShadow(newVal) {
-      this.form.textShadow = `0 0 1px ${newVal}`;
+      this.form.textShadow = `0 0 3px ${newVal}`;
     },
   },
 };
